@@ -651,11 +651,27 @@
   <footer>
     <div class="container foot-inner">
       <div><strong style="color:#fff;">ScaleCraft Studios</strong> — AI Industry CRMs, GST Billing &amp; Business Automation</div>
-      <div><a href="tel:+919509707043">+91 95097 07043</a> · <a href="mailto:contact.scalecraft@gmail.com">contact.scalecraft@gmail.com</a></div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;">
+        <a href="tel:+919509707043">+91 95097 07043</a>
+        <a href="mailto:contact.scalecraft@gmail.com">contact.scalecraft@gmail.com</a>
+        <button type="button" id="openCookiePrefsBtn" style="color:#5eead4;font-weight:700;">Cookie Settings</button>
+        <button type="button" id="runSiteSelfTestBtn" style="color:#93c5fd;font-weight:700;">Auto-Test Health</button>
+      </div>
     </div>
   </footer>
 
   <a id="waFloat" href="#" target="_blank" rel="noopener" class="wa-float">WhatsApp Us</a>
+
+  <!-- Cookie Consent Banner -->
+  <div id="cookieBanner" style="position:fixed;left:18px;bottom:18px;z-index:85;max-width:410px;background:#060e22;color:#e2e8f0;border:1px solid rgba(255,255,255,0.16);border-radius:16px;padding:16px 18px;box-shadow:0 20px 50px rgba(0,0,0,0.42);display:none;">
+    <div style="font-size:14px;font-weight:800;color:#fff;margin-bottom:4px;">Cookies &amp; Privacy Preferences</div>
+    <p style="font-size:12.5px;color:#cbd5e1;margin-bottom:12px;">We use essential cookies for form security and optional preference cookies to remember your currency (INR/USD) and diagnostics.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button type="button" id="cookieAcceptAllBtn" class="btn btn-teal" style="padding:7px 12px;font-size:12px;">Accept All</button>
+      <button type="button" id="cookieEssentialBtn" class="btn btn-ghost-light" style="padding:7px 12px;font-size:12px;">Essential Only</button>
+      <button type="button" id="cookieManageBtn" class="btn btn-ghost-light" style="padding:7px 12px;font-size:12px;">Manage</button>
+    </div>
+  </div>
 
   <div class="modal-backdrop" id="modalBackdrop">
     <div class="modal" role="dialog" aria-modal="true">
@@ -667,6 +683,7 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     (function () {
       const CONFIG = {
@@ -985,29 +1002,31 @@ ${feats}${bNotes.value.trim() ? "\nNotes: " + bNotes.value.trim() : ""}`;
           statusEl.style.background = "#eff6ff";
           statusEl.style.color = "#1e40af";
           statusEl.textContent = "Saving inquiry to ScaleCraft Cloud...";
-          const headers = {
-            "Content-Type": "application/json",
-            "apikey": CONFIG.supabaseAnonKey,
-            "Prefer": "return=minimal"
+          const payload = {
+            ref_code: refCode,
+            business_name: biz,
+            system_type: bType.value,
+            timeline: bTimeline.value,
+            modules,
+            notes: bNotes.value.trim(),
+            contact_phone: bPhone.value.trim(),
+            contact_email: bEmail.value.trim()
           };
-          if (!CONFIG.supabaseAnonKey.startsWith("sb_publishable_")) {
-            headers["Authorization"] = `Bearer ${CONFIG.supabaseAnonKey}`;
+          if (window.supabase && window.supabase.createClient) {
+            const sb = window.supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseAnonKey);
+            const { error } = await sb.from("project_inquiries").insert(payload);
+            if (error) throw new Error(error.message || `HTTP ${error.code || "Error"}`);
+          } else {
+            const res = await fetch(`${CONFIG.supabaseUrl.replace(/\/$/, "")}/rest/v1/project_inquiries`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json", "apikey": CONFIG.supabaseAnonKey, "Prefer": "return=minimal" },
+              body: JSON.stringify(payload)
+            });
+            if (!res.ok) {
+              const txt = await res.text();
+              throw new Error(`HTTP ${res.status}${txt ? ": " + txt.slice(0, 120) : ""}`);
+            }
           }
-          const res = await fetch(`${CONFIG.supabaseUrl.replace(/\/$/, "")}/rest/v1/project_inquiries`, {
-            method: "POST",
-            headers,
-            body: JSON.stringify({
-              ref_code: refCode,
-              business_name: biz,
-              system_type: bType.value,
-              timeline: bTimeline.value,
-              modules,
-              notes: bNotes.value.trim(),
-              contact_phone: bPhone.value.trim(),
-              contact_email: bEmail.value.trim()
-            })
-          });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
           statusEl.style.background = "#dcfce7";
           statusEl.style.color = "#166534";
           statusEl.innerHTML = `<strong>Saved to Database!</strong> Reference ID: <strong>${refCode}</strong>. Aap chahein toh <strong>Send on WhatsApp</strong> bhi daba sakte hain.`;
@@ -1104,6 +1123,108 @@ ${feats}${bNotes.value.trim() ? "\nNotes: " + bNotes.value.trim() : ""}`;
         const el = document.getElementById("heroAiPrompt");
         if (el) el.textContent = prompts[pi];
       }, 4200);
+
+      // Cookie Consent System
+      const COOKIE_KEY = "sc_cookie_consent";
+      const cookieBanner = document.getElementById("cookieBanner");
+      function readCookiePrefs() {
+        try {
+          const m = document.cookie.match(/(?:^|;\s*)sc_cookie_consent=([^;]+)/);
+          if (m) return JSON.parse(decodeURIComponent(m[1]));
+          const ls = localStorage.getItem(COOKIE_KEY);
+          return ls ? JSON.parse(ls) : null;
+        } catch (_) { return null; }
+      }
+      function saveCookiePrefs(prefs) {
+        const val = { essential: true, preferences: !!prefs.preferences, diagnostics: !!prefs.diagnostics, ts: Date.now() };
+        try {
+          document.cookie = `sc_cookie_consent=${encodeURIComponent(JSON.stringify(val))}; max-age=15552000; path=/; SameSite=Lax`;
+          localStorage.setItem(COOKIE_KEY, JSON.stringify(val));
+        } catch (_) {}
+        cookieBanner.style.display = "none";
+      }
+      function openCookieModal() {
+        const cur = readCookiePrefs() || { preferences: true, diagnostics: true };
+        openModal("Manage Cookie Preferences", `
+          <p>Control which cookies ScaleCraft Studios stores in your browser.</p>
+          <label style="display:flex;justify-content:space-between;align-items:center;padding:10px;border:1px solid var(--border);border-radius:10px;">
+            <span><strong>Essential Cookies</strong><br><small>Form security, Supabase session &amp; brief state</small></span>
+            <input type="checkbox" checked disabled />
+          </label>
+          <label style="display:flex;justify-content:space-between;align-items:center;padding:10px;border:1px solid var(--border);border-radius:10px;cursor:pointer;">
+            <span><strong>Workspace Preferences</strong><br><small>Remembers INR/USD toggle &amp; CRM preset</small></span>
+            <input type="checkbox" id="ckPref" ${cur.preferences ? "checked" : ""} />
+          </label>
+          <label style="display:flex;justify-content:space-between;align-items:center;padding:10px;border:1px solid var(--border);border-radius:10px;cursor:pointer;">
+            <span><strong>Diagnostics &amp; Auto-Tests</strong><br><small>Tracks client-side health check results</small></span>
+            <input type="checkbox" id="ckDiag" ${cur.diagnostics ? "checked" : ""} />
+          </label>
+          <button type="button" id="ckSaveBtn" class="btn btn-primary" style="width:100%;">Save Preferences</button>
+        `);
+        document.getElementById("ckSaveBtn").addEventListener("click", () => {
+          saveCookiePrefs({
+            preferences: document.getElementById("ckPref").checked,
+            diagnostics: document.getElementById("ckDiag").checked
+          });
+          closeModal();
+        });
+      }
+      if (!readCookiePrefs()) cookieBanner.style.display = "block";
+      document.getElementById("cookieAcceptAllBtn").addEventListener("click", () => saveCookiePrefs({ preferences: true, diagnostics: true }));
+      document.getElementById("cookieEssentialBtn").addEventListener("click", () => saveCookiePrefs({ preferences: false, diagnostics: false }));
+      document.getElementById("cookieManageBtn").addEventListener("click", openCookieModal);
+      document.getElementById("openCookiePrefsBtn").addEventListener("click", openCookieModal);
+
+      // Built-in Bug Auto-Tester (Ctrl+Shift+T, ?autotest=1, or Footer button)
+      const runtimeErrors = [];
+      window.addEventListener("error", (ev) => runtimeErrors.push(ev.message || "Script error"));
+      window.addEventListener("unhandledrejection", (ev) => runtimeErrors.push(String(ev.reason || "Promise rejection")));
+
+      function runSiteAutoTest(showUI = true) {
+        const checks = [];
+        const add = (name, ok, detail) => checks.push({ name, ok: !!ok, detail: detail || "" });
+
+        add("0 Runtime JS Errors", runtimeErrors.length === 0, runtimeErrors.length ? runtimeErrors.join("; ") : "Clean");
+        add("Services Tabs (5) & Switcher", document.querySelectorAll("#svcTabs .svc-tab").length === 5, "5 tabs rendered");
+        add("6 Industry Playbooks", document.querySelectorAll("#indGrid .ind-card").length === 6, "All 6 cards live");
+        add("4 Case Studies", document.querySelectorAll("#projGrid .proj-card").length === 4, "Studify, DineLoop, Jai Ganga, CRM");
+
+        const prevUsers = roiUsers.value;
+        roiUsers.value = "20";
+        updateROI();
+        const roiOk = document.getElementById("roiSaasYr").textContent.includes("4,80,000");
+        roiUsers.value = prevUsers;
+        updateROI();
+        add("ROI Calculator Live Math", roiOk, "20 users -> ₹4,80,000/yr");
+
+        add("Brief Builder & WhatsApp Link", waSendBtn.href.includes("wa.me/919509707043"), "WhatsApp + Email wired");
+        add("Cookie Consent System", !!document.getElementById("cookieBanner") && typeof saveCookiePrefs === "function", readCookiePrefs() ? "Consent saved" : "Banner ready");
+        add("Supabase JS SDK Loaded", !!(window.supabase && window.supabase.createClient), CONFIG.supabaseUrl);
+
+        const passed = checks.filter(c => c.ok).length;
+        if (showUI) {
+          openModal(`Site Bug Auto-Tester (${passed}/${checks.length} Passed)`, `
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              ${checks.map(c => `
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 11px;border-radius:10px;background:${c.ok ? "#ecfdf5" : "#fef2f2"};color:${c.ok ? "#065f46" : "#991b1b"};font-size:13px;">
+                  <span><strong>${c.ok ? "PASS" : "FAIL"}:</strong> ${c.name}</span>
+                  <small>${c.detail}</small>
+                </div>
+              `).join("")}
+            </div>
+          `);
+        }
+        return { passed, total: checks.length, checks };
+      }
+
+      window.__scTest = { runSiteAutoTest, readCookiePrefs };
+      document.getElementById("runSiteSelfTestBtn").addEventListener("click", () => runSiteAutoTest(true));
+      document.addEventListener("keydown", (e) => {
+        if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "t") { e.preventDefault(); runSiteAutoTest(true); }
+      });
+      if (new URLSearchParams(window.location.search).get("autotest") === "1") {
+        setTimeout(() => runSiteAutoTest(true), 250);
+      }
     })();
   </script>
 </body>

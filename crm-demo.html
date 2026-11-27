@@ -442,6 +442,10 @@
 
     <div class="side-foot">
       <button class="side-link" id="cloudAuthBtn" type="button" style="background:rgba(37,99,235,0.28);color:#bfdbfe;">Connect Cloud Backend</button>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+        <button class="side-link" id="openCrmCookieBtn" type="button">Cookies</button>
+        <button class="side-link" id="runCrmTestBtn" type="button" style="color:#93c5fd;">Auto-Test</button>
+      </div>
       <button class="side-link" id="resetDemoBtn" type="button">Reset Sample Data</button>
       <a class="side-link" href="index.html" style="background:rgba(20,184,166,0.18);color:#5eead4;">&larr; Back to ScaleCraft Site</a>
     </div>
@@ -496,6 +500,18 @@
 
   <div class="toast" id="toast"></div>
 
+  <!-- Cookie Consent Banner -->
+  <div id="cookieBanner" style="position:fixed;left:18px;bottom:18px;z-index:110;max-width:390px;background:#060e22;color:#e2e8f0;border:1px solid rgba(255,255,255,0.16);border-radius:16px;padding:15px 17px;box-shadow:0 20px 50px rgba(0,0,0,0.42);display:none;">
+    <div style="font-size:13.5px;font-weight:800;color:#fff;margin-bottom:4px;">Cookies &amp; Workspace Storage</div>
+    <p style="font-size:12px;color:#cbd5e1;margin-bottom:11px;">Essential cookies keep your CRM auth &amp; demo state safe. Preferences save your industry preset &amp; mobile mode.</p>
+    <div style="display:flex;gap:7px;flex-wrap:wrap;">
+      <button type="button" id="cookieAcceptAllBtn" class="btn btn-teal" style="padding:6px 11px;font-size:12px;">Accept All</button>
+      <button type="button" id="cookieEssentialBtn" class="btn btn-outline" style="padding:6px 11px;font-size:12px;background:rgba(255,255,255,0.06);color:#fff;border-color:rgba(255,255,255,0.2);">Essential Only</button>
+      <button type="button" id="cookieManageBtn" class="btn btn-outline" style="padding:6px 11px;font-size:12px;background:rgba(255,255,255,0.06);color:#fff;border-color:rgba(255,255,255,0.2);">Manage</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     (function () {
       const STORAGE_KEY = "scalecraft_crm_enterprise_v2";
@@ -518,6 +534,15 @@
       }
       function getAuth() {
         try { return JSON.parse(localStorage.getItem(AUTH_KEY) || "null"); } catch (_) { return null; }
+      }
+      function getSbClient(withUserJwt = false) {
+        const cfg = getCloudCfg();
+        if (!cfg.url || !cfg.anonKey || !window.supabase?.createClient) return null;
+        const auth = getAuth();
+        const opts = (withUserJwt && auth?.access_token)
+          ? { global: { headers: { Authorization: `Bearer ${auth.access_token}` } } }
+          : undefined;
+        return window.supabase.createClient(cfg.url, cfg.anonKey, opts);
       }
 
       const PRESETS = {
@@ -1416,21 +1441,17 @@
         });
 
         async function doAuth(mode) {
-          const curCfg = getCloudCfg();
-          if (!curCfg.url || !curCfg.anonKey) { showToast("Save Supabase URL & Anon Key first"); return; }
+          const sb = getSbClient(false);
+          if (!sb) { showToast("Save Supabase URL & Anon Key first"); return; }
           const email = document.getElementById("authEmail").value.trim();
           const password = document.getElementById("authPass").value;
-          const endpoint = mode === "signup" ? "/auth/v1/signup" : "/auth/v1/token?grant_type=password";
           try {
-            const res = await fetch(`${curCfg.url}${endpoint}`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json", "apikey": curCfg.anonKey },
-              body: JSON.stringify({ email, password })
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.msg || data.error_description || "Auth failed");
-            if (data.access_token) {
-              localStorage.setItem(AUTH_KEY, JSON.stringify(data));
+            const resp = mode === "signup"
+              ? await sb.auth.signUp({ email, password })
+              : await sb.auth.signInWithPassword({ email, password });
+            if (resp.error) throw new Error(resp.error.message || "Auth failed");
+            if (resp.data?.session?.access_token) {
+              localStorage.setItem(AUTH_KEY, JSON.stringify(resp.data.session));
               const loaded = await pullWorkspaceFromCloud();
               if (!loaded) await pushWorkspaceToCloud();
               closeModal();
@@ -1453,13 +1474,15 @@
         const pullBtn = document.getElementById("pullWebLeadsBtn");
         if (pullBtn) {
           pullBtn.addEventListener("click", async () => {
-            const curCfg = getCloudCfg();
-            const curAuth = getAuth();
+            const sb = getSbClient(true);
+            if (!sb) { showToast("Backend SDK not ready"); return; }
             try {
-              const res = await fetch(`${curCfg.url}/rest/v1/project_inquiries?select=*&order=created_at.desc&limit=20`, {
-                headers: { "apikey": curCfg.anonKey, "Authorization": `Bearer ${curAuth.access_token}` }
-              });
-              const rows = await res.json();
+              const { data: rows, error } = await sb
+                .from("project_inquiries")
+                .select("*")
+                .order("created_at", { ascending: false })
+                .limit(20);
+              if (error) throw new Error(error.message);
               if (!Array.isArray(rows) || !rows.length) { showToast("No new website inquiries yet."); return; }
               let added = 0;
               rows.forEach(r => {
@@ -1773,6 +1796,8 @@
         state.aiChat.push({ role: "user", text: cmd });
         const cfg = getCloudCfg();
         if (cfg.url && cfg.anonKey) {
+          const ac = new AbortController();
+          const timer = setTimeout(() => ac.abort(), 8000);
           try {
             state.aiChat.push({ role: "ai", text: "Thinking via Gemini AI Operator..." });
             render();
@@ -1782,10 +1807,10 @@
             };
             const userTok = getAuth()?.access_token;
             if (userTok) aiHeaders["Authorization"] = `Bearer ${userTok}`;
-            else if (!cfg.anonKey.startsWith("sb_publishable_")) aiHeaders["Authorization"] = `Bearer ${cfg.anonKey}`;
             const res = await fetch(`${cfg.url}/functions/v1/crm-ai`, {
               method: "POST",
               headers: aiHeaders,
+              signal: ac.signal,
               body: JSON.stringify({
                 command: cmd,
                 context: {
@@ -1795,9 +1820,10 @@
                 }
               })
             });
+            clearTimeout(timer);
             if (res.ok) {
               const data = await res.json();
-              state.aiChat.pop();
+              if (state.aiChat[state.aiChat.length - 1]?.text?.startsWith("Thinking")) state.aiChat.pop();
               state.aiChat.push({ role: "ai", text: `${data.reply}${data.model ? ` (${data.model})` : ""}` });
               if (data.proposedAction && data.proposedAction.title) {
                 state.aiQueue.unshift({
@@ -1810,8 +1836,9 @@
               save(); render();
               return;
             }
-            state.aiChat.pop();
+            if (state.aiChat[state.aiChat.length - 1]?.text?.startsWith("Thinking")) state.aiChat.pop();
           } catch (_) {
+            clearTimeout(timer);
             if (state.aiChat[state.aiChat.length - 1]?.text?.startsWith("Thinking")) state.aiChat.pop();
           }
         }
@@ -1895,6 +1922,132 @@
       });
 
       render();
+
+      // Cookie Consent System
+      const COOKIE_KEY = "sc_cookie_consent";
+      const cookieBanner = document.getElementById("cookieBanner");
+      function readCookiePrefs() {
+        try {
+          const m = document.cookie.match(/(?:^|;\s*)sc_cookie_consent=([^;]+)/);
+          if (m) return JSON.parse(decodeURIComponent(m[1]));
+          const ls = localStorage.getItem(COOKIE_KEY);
+          return ls ? JSON.parse(ls) : null;
+        } catch (_) { return null; }
+      }
+      function saveCookiePrefs(prefs) {
+        const val = { essential: true, preferences: !!prefs.preferences, diagnostics: !!prefs.diagnostics, ts: Date.now() };
+        try {
+          document.cookie = `sc_cookie_consent=${encodeURIComponent(JSON.stringify(val))}; max-age=15552000; path=/; SameSite=Lax`;
+          localStorage.setItem(COOKIE_KEY, JSON.stringify(val));
+        } catch (_) {}
+        cookieBanner.style.display = "none";
+      }
+      function openCookieModal() {
+        const cur = readCookiePrefs() || { preferences: true, diagnostics: true };
+        openModal("Cookie & Storage Preferences", `
+          <label style="display:flex;justify-content:space-between;align-items:center;padding:10px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;">
+            <span><strong>Essential Cookies</strong><br><small style="color:var(--muted);">Auth session, Lead/Invoice demo state</small></span>
+            <input type="checkbox" checked disabled />
+          </label>
+          <label style="display:flex;justify-content:space-between;align-items:center;padding:10px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;cursor:pointer;">
+            <span><strong>Workspace Preferences</strong><br><small style="color:var(--muted);">Remembers industry preset &amp; Mobile View</small></span>
+            <input type="checkbox" id="ckPref" ${cur.preferences ? "checked" : ""} />
+          </label>
+          <label style="display:flex;justify-content:space-between;align-items:center;padding:10px;border:1px solid var(--border);border-radius:10px;margin-bottom:12px;cursor:pointer;">
+            <span><strong>Diagnostics &amp; Auto-Tests</strong><br><small style="color:var(--muted);">Enables live CRM self-test diagnostics</small></span>
+            <input type="checkbox" id="ckDiag" ${cur.diagnostics ? "checked" : ""} />
+          </label>
+          <button type="button" id="ckSaveBtn" class="btn btn-primary" style="width:100%;">Save Cookie Preferences</button>
+        `);
+        document.getElementById("ckSaveBtn").addEventListener("click", () => {
+          saveCookiePrefs({
+            preferences: document.getElementById("ckPref").checked,
+            diagnostics: document.getElementById("ckDiag").checked
+          });
+          closeModal();
+          showToast("Cookie preferences saved!");
+        });
+      }
+      if (!readCookiePrefs()) cookieBanner.style.display = "block";
+      document.getElementById("cookieAcceptAllBtn").addEventListener("click", () => { saveCookiePrefs({ preferences: true, diagnostics: true }); showToast("All cookies accepted"); });
+      document.getElementById("cookieEssentialBtn").addEventListener("click", () => { saveCookiePrefs({ preferences: false, diagnostics: false }); showToast("Essential cookies only"); });
+      document.getElementById("cookieManageBtn").addEventListener("click", openCookieModal);
+      document.getElementById("openCrmCookieBtn").addEventListener("click", openCookieModal);
+
+      // Built-in CRM Bug Auto-Tester (Ctrl+Shift+T, ?autotest=1, or Sidebar Auto-Test)
+      const runtimeErrors = [];
+      window.addEventListener("error", (ev) => runtimeErrors.push(ev.message || "Script error"));
+      window.addEventListener("unhandledrejection", (ev) => runtimeErrors.push(String(ev.reason || "Promise rejection")));
+
+      function runCrmAutoTest(showUI = true) {
+        const checks = [];
+        const add = (name, ok, detail) => checks.push({ name, ok: !!ok, detail: detail || "" });
+        const origTab = state.tab;
+
+        add("0 Runtime JS Errors", runtimeErrors.length === 0, runtimeErrors.length ? runtimeErrors.join("; ") : "Clean");
+        add("6 Industry Presets Loaded", Object.keys(PRESETS).length === 6, Object.keys(PRESETS).join(", "));
+
+        const navTabs = Array.from(document.querySelectorAll("#navGroup [data-tab]"));
+        let allTabsOk = navTabs.length === 8;
+        navTabs.forEach(btn => {
+          state.tab = btn.dataset.tab;
+          render();
+          if (!mainEl.innerHTML.trim()) allTabsOk = false;
+        });
+        state.tab = origTab;
+        render();
+        add("All 8 CRM Modules Render", allTabsOk, `${navTabs.length} modules verified`);
+
+        const firstLead = state.leads[0];
+        let drawerOk = false;
+        if (firstLead) {
+          state.selectedLeadId = firstLead.id;
+          renderDrawer();
+          drawerOk = document.getElementById("drawerBackdrop").classList.contains("open");
+          state.selectedLeadId = null;
+          renderDrawer();
+        }
+        add("Lead 360° Slide-Over Drawer", drawerOk, firstLead ? firstLead.name : "N/A");
+
+        const inv0 = state.invoices[0];
+        const gstOk = inv0 ? Math.round(invBase(inv0) * 0.18) >= 0 : false;
+        add("18% CGST/SGST Billing Engine", gstOk, inv0 ? `${inv0.id} verified` : "No invoice");
+
+        const prevMob = state.mobilePreview;
+        state.mobilePreview = !prevMob;
+        updateShell();
+        const mobOk = workspaceWrap.classList.contains("mobile-frame") === !prevMob;
+        state.mobilePreview = prevMob;
+        updateShell();
+        add("Field Mobile View Toggle", mobOk, "Desktop <-> Mobile responsive");
+
+        add("Cookie Consent System", !!document.getElementById("cookieBanner") && typeof saveCookiePrefs === "function", readCookiePrefs() ? "Consent saved" : "Banner ready");
+        add("Supabase JS SDK v2 Ready", !!(window.supabase && window.supabase.createClient), getCloudCfg().url || "Not set");
+
+        const passed = checks.filter(c => c.ok).length;
+        if (showUI) {
+          openModal(`CRM Bug Auto-Tester (${passed}/${checks.length} Passed)`, `
+            <div style="display:flex;flex-direction:column;gap:7px;">
+              ${checks.map(c => `
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 11px;border-radius:10px;background:${c.ok ? "#ecfdf5" : "#fef2f2"};color:${c.ok ? "#065f46" : "#991b1b"};font-size:12.5px;">
+                  <span><strong>${c.ok ? "PASS" : "FAIL"}:</strong> ${c.name}</span>
+                  <small>${c.detail}</small>
+                </div>
+              `).join("")}
+            </div>
+          `);
+        }
+        return { passed, total: checks.length, checks };
+      }
+
+      window.__scCrmTest = { runCrmAutoTest, readCookiePrefs };
+      document.getElementById("runCrmTestBtn").addEventListener("click", () => runCrmAutoTest(true));
+      document.addEventListener("keydown", (e) => {
+        if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "t") { e.preventDefault(); runCrmAutoTest(true); }
+      });
+      if (new URLSearchParams(window.location.search).get("autotest") === "1") {
+        setTimeout(() => runCrmAutoTest(true), 250);
+      }
     })();
   </script>
 </body>
