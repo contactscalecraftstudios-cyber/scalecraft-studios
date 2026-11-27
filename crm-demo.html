@@ -1776,13 +1776,16 @@
           try {
             state.aiChat.push({ role: "ai", text: "Thinking via Gemini AI Operator..." });
             render();
+            const aiHeaders = {
+              "Content-Type": "application/json",
+              "apikey": cfg.anonKey
+            };
+            const userTok = getAuth()?.access_token;
+            if (userTok) aiHeaders["Authorization"] = `Bearer ${userTok}`;
+            else if (!cfg.anonKey.startsWith("sb_publishable_")) aiHeaders["Authorization"] = `Bearer ${cfg.anonKey}`;
             const res = await fetch(`${cfg.url}/functions/v1/crm-ai`, {
               method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                "apikey": cfg.anonKey,
-                "Authorization": `Bearer ${getAuth()?.access_token || cfg.anonKey}`
-              },
+              headers: aiHeaders,
               body: JSON.stringify({
                 command: cmd,
                 context: {

@@ -985,14 +985,17 @@ ${feats}${bNotes.value.trim() ? "\nNotes: " + bNotes.value.trim() : ""}`;
           statusEl.style.background = "#eff6ff";
           statusEl.style.color = "#1e40af";
           statusEl.textContent = "Saving inquiry to ScaleCraft Cloud...";
+          const headers = {
+            "Content-Type": "application/json",
+            "apikey": CONFIG.supabaseAnonKey,
+            "Prefer": "return=minimal"
+          };
+          if (!CONFIG.supabaseAnonKey.startsWith("sb_publishable_")) {
+            headers["Authorization"] = `Bearer ${CONFIG.supabaseAnonKey}`;
+          }
           const res = await fetch(`${CONFIG.supabaseUrl.replace(/\/$/, "")}/rest/v1/project_inquiries`, {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "apikey": CONFIG.supabaseAnonKey,
-              "Authorization": `Bearer ${CONFIG.supabaseAnonKey}`,
-              "Prefer": "return=minimal"
-            },
+            headers,
             body: JSON.stringify({
               ref_code: refCode,
               business_name: biz,
