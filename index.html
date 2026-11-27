@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ScaleCraft Studios — Custom AI CRMs, Billing & Business Automation</title>
-  <meta name="description" content="We build custom AI-powered CRMs, GST billing software, and WhatsApp automations in 14 days. Zero per-seat fees, full code ownership." />
+  <title>ScaleCraft Studios — AI Industry CRMs, Billing &amp; Business Automation</title>
+  <meta name="description" content="Custom AI-powered industry CRMs, GST billing systems, and WhatsApp automations shipped in 14 days. Zero per-seat fees, full code ownership." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --navy: #071024;
-      --navy-2: #0d1936;
+      --navy: #060e22;
+      --navy-2: #0c1836;
       --navy-border: rgba(255, 255, 255, 0.1);
       --blue: #2563eb;
       --blue-hover: #1d4ed8;
@@ -22,8 +22,7 @@
       --text: #0f172a;
       --muted: #475569;
       --border: #e2e8f0;
-      --radius: 16px;
-      --shadow: 0 12px 32px -12px rgba(15, 23, 42, 0.12);
+      --shadow: 0 14px 36px -14px rgba(15, 23, 42, 0.14);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -35,586 +34,283 @@
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
     }
-
     a { color: inherit; text-decoration: none; }
     button { font: inherit; cursor: pointer; border: none; background: none; }
-    .container { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 
     /* Top Bar */
     .topbar {
-      background: #040916;
+      background: #030712;
       color: #cbd5e1;
       font-size: 12.5px;
       padding: 8px 0;
       border-bottom: 1px solid var(--navy-border);
     }
-    .topbar-inner {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .topbar-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: #5eead4;
-      font-weight: 600;
-    }
-    .dot-live {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #22c55e;
-      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2);
-    }
+    .topbar-inner { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .topbar-pill { display: inline-flex; align-items: center; gap: 7px; color: #5eead4; font-weight: 700; }
+    .dot-live { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.22); }
 
-    /* Sticky Navbar */
+    /* Navbar */
     .navbar {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      background: rgba(7, 16, 36, 0.92);
-      backdrop-filter: blur(12px);
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(6, 14, 34, 0.92);
+      backdrop-filter: blur(14px);
       border-bottom: 1px solid var(--navy-border);
       color: #fff;
     }
-    .nav-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 68px;
-      gap: 16px;
-    }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 800;
-      font-size: 19px;
-      letter-spacing: -0.02em;
-    }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 70px; gap: 16px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 19px; letter-spacing: -0.02em; }
     .brand-mark {
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
+      width: 35px; height: 35px; border-radius: 10px;
       background: linear-gradient(135deg, var(--blue), var(--teal));
-      display: grid;
-      place-items: center;
-      font-weight: 800;
-      font-size: 15px;
-      color: #fff;
+      display: grid; place-items: center; font-weight: 800; font-size: 15px; color: #fff;
+      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.38);
     }
     .brand span { color: var(--teal); }
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 24px;
-      font-size: 14px;
-      font-weight: 500;
-      color: #cbd5e1;
-    }
+    .nav-links { display: flex; align-items: center; gap: 22px; font-size: 13.5px; font-weight: 600; color: #cbd5e1; }
     .nav-links a:hover { color: #fff; }
     .nav-actions { display: flex; align-items: center; gap: 10px; }
 
     .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 11px 18px;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 14px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 11px 18px; border-radius: 10px; font-weight: 700; font-size: 13.5px;
       transition: all 0.18s ease;
     }
     .btn-primary { background: var(--blue); color: #fff; }
     .btn-primary:hover { background: var(--blue-hover); transform: translateY(-1px); }
-    .btn-teal { background: var(--teal); color: #042f2e; font-weight: 700; }
+    .btn-teal { background: var(--teal); color: #042f2e; }
     .btn-teal:hover { filter: brightness(1.06); transform: translateY(-1px); }
-    .btn-ghost-light {
-      border: 1px solid rgba(255, 255, 255, 0.22);
-      color: #fff;
-      background: rgba(255, 255, 255, 0.04);
-    }
-    .btn-ghost-light:hover { background: rgba(255, 255, 255, 0.1); }
-    .btn-outline {
-      border: 1px solid var(--border);
-      color: var(--text);
-      background: #fff;
-    }
+    .btn-ghost-light { border: 1px solid rgba(255, 255, 255, 0.22); color: #fff; background: rgba(255, 255, 255, 0.05); }
+    .btn-ghost-light:hover { background: rgba(255, 255, 255, 0.12); }
+    .btn-outline { border: 1px solid var(--border); color: var(--text); background: #fff; }
     .btn-outline:hover { border-color: #94a3b8; }
-
     .hamburger { display: none; color: #fff; font-size: 22px; padding: 6px; }
 
     /* Hero */
     .hero {
       background:
-        radial-gradient(circle at 80% 20%, rgba(20, 184, 166, 0.16), transparent 45%),
-        radial-gradient(circle at 15% 80%, rgba(37, 99, 235, 0.2), transparent 45%),
-        linear-gradient(180deg, var(--navy) 0%, #0b1631 100%);
+        linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px),
+        radial-gradient(circle at 82% 18%, rgba(20, 184, 166, 0.2), transparent 44%),
+        radial-gradient(circle at 12% 82%, rgba(37, 99, 235, 0.24), transparent 44%),
+        linear-gradient(180deg, var(--navy) 0%, #0b1634 100%);
+      background-size: 44px 44px, 44px 44px, 100% 100%, 100% 100%, 100% 100%;
       color: #fff;
       padding: 72px 0 84px;
       border-bottom: 1px solid var(--navy-border);
     }
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 44px;
-      align-items: center;
-    }
+    .hero-grid { display: grid; grid-template-columns: 1.12fr 0.88fr; gap: 42px; align-items: center; }
     .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--teal-soft);
-      border: 1px solid rgba(20, 184, 166, 0.35);
-      color: #5eead4;
-      font-size: 12.5px;
-      font-weight: 700;
-      padding: 6px 14px;
-      border-radius: 999px;
-      margin-bottom: 20px;
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--teal-soft); border: 1px solid rgba(20, 184, 166, 0.35);
+      color: #5eead4; font-size: 12px; font-weight: 800; padding: 6px 14px;
+      border-radius: 999px; margin-bottom: 18px; letter-spacing: 0.02em;
     }
     .hero h1 {
-      font-size: clamp(32px, 4.4vw, 50px);
-      line-height: 1.12;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      margin-bottom: 18px;
+      font-size: clamp(32px, 4.3vw, 50px); line-height: 1.12; font-weight: 800;
+      letter-spacing: -0.03em; margin-bottom: 18px;
     }
     .hero h1 .accent {
       background: linear-gradient(90deg, #60a5fa, #2dd4bf);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
-    .hero-sub {
-      color: #cbd5e1;
-      font-size: 16.5px;
-      max-width: 560px;
-      margin-bottom: 28px;
-    }
-    .hero-ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 30px; }
+    .hero-sub { color: #cbd5e1; font-size: 16px; max-width: 560px; margin-bottom: 26px; }
+    .hero-ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 28px; }
     .hero-proof {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      padding-top: 22px;
-      border-top: 1px solid var(--navy-border);
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+      padding-top: 22px; border-top: 1px solid var(--navy-border);
     }
-    .proof-item strong { display: block; font-size: 22px; font-weight: 800; color: #fff; }
-    .proof-item span { font-size: 12.5px; color: #94a3b8; }
+    .proof-item strong { display: block; font-size: 20px; font-weight: 800; color: #fff; }
+    .proof-item span { font-size: 12px; color: #94a3b8; }
 
-    /* Hero Preview Card */
+    /* Interactive Hero Console */
     .hero-card {
-      background: rgba(15, 23, 42, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+      background: rgba(12, 24, 54, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 20px; padding: 20px;
+      box-shadow: 0 28px 65px rgba(0, 0, 0, 0.5);
     }
-    .hc-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-      font-size: 12.5px;
-      color: #94a3b8;
-    }
+    .hc-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; font-size: 12px; color: #94a3b8; }
     .hc-dots { display: flex; gap: 6px; }
-    .hc-dots i { width: 9px; height: 9px; border-radius: 50%; background: #334155; display: block; }
+    .hc-dots i { width: 9px; height: 9px; border-radius: 50%; display: block; }
     .hc-dots i:first-child { background: #ef4444; }
     .hc-dots i:nth-child(2) { background: #f59e0b; }
     .hc-dots i:nth-child(3) { background: #22c55e; }
     .hc-ai-box {
-      background: rgba(20, 184, 166, 0.1);
-      border: 1px solid rgba(20, 184, 166, 0.28);
-      border-radius: 12px;
-      padding: 12px 14px;
-      margin-bottom: 14px;
+      background: rgba(20, 184, 166, 0.12);
+      border: 1px solid rgba(20, 184, 166, 0.32);
+      border-radius: 12px; padding: 12px 14px; margin-bottom: 14px;
     }
-    .hc-ai-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: #5eead4; font-weight: 700; margin-bottom: 4px; }
-    .hc-ai-text { font-size: 13.5px; color: #e2e8f0; }
-    .hc-stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 14px;
-    }
+    .hc-ai-label { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: #5eead4; font-weight: 800; margin-bottom: 3px; }
+    .hc-ai-text { font-size: 13px; color: #f1f5f9; font-weight: 600; }
+    .hc-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
     .hc-stat {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px;
-      padding: 12px;
+      background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 11px; padding: 10px;
     }
-    .hc-stat small { color: #94a3b8; font-size: 11.5px; display: block; }
-    .hc-stat b { font-size: 18px; color: #fff; }
-    .hc-rows { display: flex; flex-direction: column; gap: 8px; }
+    .hc-stat small { color: #94a3b8; font-size: 11px; display: block; }
+    .hc-stat b { font-size: 16px; color: #fff; }
+    .hc-rows { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
     .hc-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 12.5px;
-      padding: 9px 12px;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex; justify-content: space-between; align-items: center; font-size: 12.5px;
+      padding: 9px 12px; border-radius: 10px; background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.07);
     }
-    .tag {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 3px 9px;
-      border-radius: 999px;
-    }
+    .tag { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px; }
     .tag-green { background: rgba(34, 197, 94, 0.16); color: #86efac; }
     .tag-amber { background: rgba(245, 158, 11, 0.16); color: #fcd34d; }
-    .tag-blue { background: rgba(59, 130, 246, 0.18); color: #93c5fd; }
+    .tag-blue { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
 
     /* Sections */
     section { padding: 76px 0; }
-    .sec-head { max-width: 680px; margin-bottom: 40px; }
+    .sec-head { max-width: 700px; margin-bottom: 38px; }
     .sec-kicker {
-      display: inline-block;
-      font-size: 12px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--blue);
-      margin-bottom: 8px;
+      display: inline-block; font-size: 11.5px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--blue); margin-bottom: 8px;
     }
-    .sec-head h2 {
-      font-size: clamp(26px, 3.2vw, 36px);
-      font-weight: 800;
-      letter-spacing: -0.025em;
-      margin-bottom: 10px;
-    }
-    .sec-head p { color: var(--muted); font-size: 16px; }
+    .sec-head h2 { font-size: clamp(26px, 3.2vw, 36px); font-weight: 800; letter-spacing: -0.025em; margin-bottom: 10px; }
+    .sec-head p { color: var(--muted); font-size: 15.5px; }
 
     /* Services Switcher */
-    .svc-wrap {
-      display: grid;
-      grid-template-columns: 320px 1fr;
-      gap: 24px;
-      align-items: stretch;
-    }
+    .svc-wrap { display: grid; grid-template-columns: 320px 1fr; gap: 22px; align-items: stretch; }
     .svc-tabs { display: flex; flex-direction: column; gap: 8px; }
     .svc-tab {
-      text-align: left;
-      padding: 15px 16px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      transition: all 0.15s ease;
+      text-align: left; padding: 14px 15px; border-radius: 12px;
+      border: 1px solid var(--border); background: var(--surface);
+      display: flex; align-items: center; gap: 12px; transition: all 0.15s ease;
     }
     .svc-tab:hover { border-color: #cbd5e1; }
-    .svc-tab.active {
-      background: var(--navy);
-      color: #fff;
-      border-color: var(--navy);
-      box-shadow: var(--shadow);
-    }
+    .svc-tab.active { background: var(--navy); color: #fff; border-color: var(--navy); box-shadow: var(--shadow); }
     .svc-num {
-      font-size: 12px;
-      font-weight: 800;
-      width: 28px;
-      height: 28px;
-      border-radius: 8px;
-      display: grid;
-      place-items: center;
-      background: #eff6ff;
-      color: var(--blue);
-      flex-shrink: 0;
+      font-size: 12px; font-weight: 800; width: 28px; height: 28px; border-radius: 8px;
+      display: grid; place-items: center; background: #eff6ff; color: var(--blue); flex-shrink: 0;
     }
     .svc-tab.active .svc-num { background: var(--teal); color: #042f2e; }
-    .svc-tab-title { font-weight: 700; font-size: 14.5px; }
-
+    .svc-tab-title { font-weight: 700; font-size: 14px; }
     .svc-panel {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 30px;
-      box-shadow: var(--shadow);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 22px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 18px;
+      padding: 28px; box-shadow: var(--shadow); display: flex; flex-direction: column; justify-content: space-between; gap: 20px;
     }
-    .svc-panel h3 { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
-    .svc-panel p { color: var(--muted); margin-bottom: 18px; }
-    .svc-bullets {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      list-style: none;
-    }
+    .svc-panel h3 { font-size: 23px; font-weight: 800; margin-bottom: 8px; }
+    .svc-panel p { color: var(--muted); margin-bottom: 18px; font-size: 14.5px; }
+    .svc-bullets { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; list-style: none; }
     .svc-bullets li {
-      background: #f8fafc;
-      border: 1px solid var(--border);
-      padding: 12px 14px;
-      border-radius: 10px;
-      font-size: 13.5px;
-      font-weight: 600;
+      background: #f8fafc; border: 1px solid var(--border); padding: 11px 13px;
+      border-radius: 10px; font-size: 13px; font-weight: 600;
     }
     .svc-stack { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-    .chip {
-      font-size: 12px;
-      font-weight: 600;
-      padding: 5px 11px;
-      border-radius: 999px;
-      background: #f1f5f9;
-      color: #334155;
-      border: 1px solid #e2e8f0;
-    }
+    .chip { font-size: 12px; font-weight: 600; padding: 5px 11px; border-radius: 999px; background: #f1f5f9; color: #334155; border: 1px solid #e2e8f0; }
 
-    /* Projects / Case Studies */
-    .projects-bg { background: #fff; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-    .proj-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 22px;
+    /* Industry Playbooks Grid (Zepfly-level + Interactive Launch) */
+    .white-bg { background: #fff; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .ind-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .ind-card {
+      border: 1px solid var(--border); border-radius: 16px; padding: 22px; background: #fff;
+      display: flex; flex-direction: column; gap: 12px; transition: all 0.18s ease;
     }
+    .ind-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: #93c5fd; }
+    .ind-head { display: flex; justify-content: space-between; align-items: center; }
+    .ind-ico {
+      width: 40px; height: 40px; border-radius: 11px; background: #eff6ff; color: var(--blue);
+      display: grid; place-items: center; font-weight: 800; font-size: 14px;
+    }
+    .ind-card h3 { font-size: 18px; font-weight: 800; }
+    .ind-card p { font-size: 13.5px; color: var(--muted); }
+    .ind-mods { display: flex; flex-wrap: wrap; gap: 6px; }
+    .ind-mod { font-size: 11.5px; font-weight: 600; background: #f8fafc; border: 1px solid var(--border); padding: 3px 9px; border-radius: 7px; }
+    .ind-foot { margin-top: auto; padding-top: 12px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
+
+    /* Case Studies */
+    .proj-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
     .proj-card {
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 24px;
-      background: #fff;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      border: 1px solid var(--border); border-radius: 18px; padding: 24px; background: #fff;
+      display: flex; flex-direction: column; gap: 13px; transition: transform 0.18s ease, box-shadow 0.18s ease;
     }
     .proj-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
     .proj-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-    .proj-badge {
-      font-size: 11.5px;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: #eff6ff;
-      color: var(--blue);
-    }
+    .proj-badge { font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: #eff6ff; color: var(--blue); }
     .proj-badge.live { background: #ecfdf5; color: #047857; }
-    .proj-badge.progress { background: #fef3c7; color: #b45309; }
     .proj-card h3 { font-size: 20px; font-weight: 800; }
-    .proj-meta { font-size: 13px; color: var(--muted); }
+    .proj-meta { font-size: 12.5px; color: var(--muted); font-weight: 600; }
     .proj-points { font-size: 13.5px; color: #334155; display: flex; flex-direction: column; gap: 6px; }
-    .proj-foot {
-      margin-top: auto;
-      padding-top: 14px;
-      border-top: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
+    .proj-foot { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+
+    /* 4-Step Delivery Timeline */
+    .steps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .step-card {
+      background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 20px;
+      display: flex; flex-direction: column; gap: 8px;
     }
+    .step-badge { font-size: 11.5px; font-weight: 800; color: var(--blue); text-transform: uppercase; letter-spacing: 0.06em; }
+    .step-card h4 { font-size: 16px; font-weight: 800; }
+    .step-card p { font-size: 13px; color: var(--muted); }
 
     /* Comparison */
     .cmp-table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #fff;
-      border-radius: 16px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
+      width: 100%; border-collapse: collapse; background: #fff; border-radius: 16px;
+      overflow: hidden; border: 1px solid var(--border); box-shadow: var(--shadow);
     }
-    .cmp-table th, .cmp-table td {
-      padding: 15px 18px;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-      font-size: 14px;
-    }
+    .cmp-table th, .cmp-table td { padding: 14px 18px; text-align: left; border-bottom: 1px solid var(--border); font-size: 13.5px; }
     .cmp-table th { background: var(--navy); color: #fff; font-weight: 700; }
     .cmp-table th.hl { background: #0f294a; color: #5eead4; }
     .cmp-table td.hl { background: #f0fdfa; font-weight: 700; color: #0f172a; }
 
     /* Pricing */
-    .pricing-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-bottom: 32px;
-    }
-    .curr-toggle {
-      display: inline-flex;
-      background: #e2e8f0;
-      padding: 4px;
-      border-radius: 10px;
-      gap: 4px;
-    }
-    .curr-btn {
-      padding: 7px 14px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--muted);
-    }
+    .pricing-top { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 30px; }
+    .curr-toggle { display: inline-flex; background: #e2e8f0; padding: 4px; border-radius: 10px; gap: 4px; }
+    .curr-btn { padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 700; color: var(--muted); }
     .curr-btn.active { background: #fff; color: var(--text); box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
-    .price-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-    }
-    .price-card {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 26px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-    .price-card.featured {
-      background: var(--navy);
-      color: #fff;
-      border-color: var(--blue);
-      box-shadow: 0 18px 44px -14px rgba(37, 99, 235, 0.35);
-    }
+    .price-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .price-card { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 14px; }
+    .price-card.featured { background: var(--navy); color: #fff; border-color: var(--blue); box-shadow: 0 18px 44px -14px rgba(37, 99, 235, 0.35); }
     .price-val { font-size: 32px; font-weight: 800; letter-spacing: -0.02em; }
     .price-card ul { list-style: none; display: flex; flex-direction: column; gap: 9px; font-size: 13.5px; margin: 6px 0 12px; }
     .price-card.featured p, .price-card.featured li { color: #cbd5e1; }
 
-    /* Self-Serve Estimator / Contact */
-    .est-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 28px;
-      align-items: start;
-    }
-    .card-box {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 26px;
-      box-shadow: var(--shadow);
-    }
-    .field { margin-bottom: 14px; }
-    .field label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
-    .field input, .field select, .field textarea {
-      width: 100%;
-      padding: 11px 13px;
-      border-radius: 10px;
-      border: 1px solid #cbd5e1;
-      font: inherit;
-      font-size: 14px;
-      background: #fff;
-    }
-    .pill-checks { display: flex; flex-wrap: wrap; gap: 8px; }
-    .pill-check {
-      padding: 7px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      font-size: 12.5px;
-      font-weight: 600;
-      background: #f8fafc;
-    }
+    /* Brief Builder */
+    .est-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; align-items: start; }
+    .card-box { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 26px; box-shadow: var(--shadow); }
+    .field { margin-bottom: 13px; }
+    .field label { display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 6px; }
+    .field input, .field select, .field textarea { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid #cbd5e1; font: inherit; font-size: 13.5px; background: #fff; }
+    .pill-checks { display: flex; flex-wrap: wrap; gap: 7px; }
+    .pill-check { padding: 7px 11px; border-radius: 999px; border: 1px solid var(--border); font-size: 12px; font-weight: 600; background: #f8fafc; }
     .pill-check.on { background: var(--navy); color: #fff; border-color: var(--navy); }
-    .brief-box {
-      background: #0f172a;
-      color: #e2e8f0;
-      border-radius: 12px;
-      padding: 16px;
-      font-size: 13px;
-      white-space: pre-wrap;
-      margin: 14px 0;
-      min-height: 140px;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
+    .brief-box { background: #0f172a; color: #e2e8f0; border-radius: 12px; padding: 16px; font-size: 12.5px; white-space: pre-wrap; margin: 14px 0; min-height: 150px; }
 
     /* FAQ */
-    .faq-list { display: flex; flex-direction: column; gap: 10px; max-width: 820px; }
+    .faq-list { display: flex; flex-direction: column; gap: 10px; max-width: 840px; }
     .faq-item { background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-    .faq-q {
-      width: 100%;
-      text-align: left;
-      padding: 16px 20px;
-      font-weight: 700;
-      font-size: 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .faq-a { padding: 0 20px 16px; font-size: 14px; color: var(--muted); display: none; }
+    .faq-q { width: 100%; text-align: left; padding: 16px 20px; font-weight: 700; font-size: 14.5px; display: flex; justify-content: space-between; align-items: center; }
+    .faq-a { padding: 0 20px 16px; font-size: 13.5px; color: var(--muted); display: none; }
     .faq-item.open .faq-a { display: block; }
 
-    /* Footer */
-    footer {
-      background: var(--navy);
-      color: #94a3b8;
-      padding: 44px 0;
-      font-size: 13.5px;
-      border-top: 1px solid var(--navy-border);
-    }
-    .foot-inner {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 16px;
-    }
+    footer { background: var(--navy); color: #94a3b8; padding: 44px 0; font-size: 13.5px; border-top: 1px solid var(--navy-border); }
+    .foot-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
 
-    /* Floating WhatsApp */
     .wa-float {
-      position: fixed;
-      right: 20px;
-      bottom: 20px;
-      z-index: 60;
-      background: #16a34a;
-      color: #fff;
-      padding: 12px 18px;
-      border-radius: 999px;
-      font-weight: 700;
-      font-size: 14px;
-      box-shadow: 0 12px 28px rgba(22, 163, 74, 0.35);
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
+      position: fixed; right: 20px; bottom: 20px; z-index: 60;
+      background: #16a34a; color: #fff; padding: 12px 18px; border-radius: 999px;
+      font-weight: 700; font-size: 13.5px; box-shadow: 0 12px 28px rgba(22, 163, 74, 0.35);
+      display: inline-flex; align-items: center; gap: 8px;
     }
     .wa-float:hover { background: #15803d; }
 
     /* Modal */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(2, 6, 23, 0.72);
-      display: none;
-      place-items: center;
-      padding: 20px;
-      z-index: 100;
-    }
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(2, 6, 23, 0.72); display: none; place-items: center; padding: 20px; z-index: 100; }
     .modal-backdrop.open { display: grid; }
-    .modal {
-      background: #fff;
-      color: var(--text);
-      max-width: 560px;
-      width: 100%;
-      border-radius: 18px;
-      padding: 26px;
-      box-shadow: 0 24px 60px rgba(0,0,0,0.35);
-    }
+    .modal { background: #fff; color: var(--text); max-width: 600px; width: 100%; border-radius: 18px; padding: 26px; box-shadow: 0 24px 60px rgba(0,0,0,0.35); max-height: 90vh; overflow-y: auto; }
     .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     .modal-close { font-size: 22px; color: var(--muted); padding: 4px 8px; }
 
-    @media (max-width: 900px) {
-      .hero-grid, .svc-wrap, .proj-grid, .price-grid, .est-grid { grid-template-columns: 1fr; }
+    @media (max-width: 980px) {
+      .hero-grid, .svc-wrap, .ind-grid, .proj-grid, .steps-grid, .price-grid, .est-grid { grid-template-columns: 1fr; }
+      .hero-proof { grid-template-columns: 1fr 1fr; }
       .nav-links, .nav-actions .btn-ghost-light { display: none; }
       .hamburger { display: block; }
       .nav-links.mobile-open {
-        display: flex;
-        flex-direction: column;
-        position: absolute;
-        top: 68px;
-        left: 0;
-        right: 0;
-        background: var(--navy-2);
-        padding: 18px 20px;
-        border-bottom: 1px solid var(--navy-border);
+        display: flex; flex-direction: column; position: absolute; top: 70px; left: 0; right: 0;
+        background: var(--navy-2); padding: 18px 20px; border-bottom: 1px solid var(--navy-border);
       }
       .svc-bullets { grid-template-columns: 1fr; }
     }
@@ -622,10 +318,10 @@
 </head>
 <body>
 
-  <!-- Top Trust Bar -->
+  <!-- Top Bar -->
   <div class="topbar">
     <div class="container topbar-inner">
-      <div class="topbar-pill"><span class="dot-live"></span> Taking 2 New Custom Software &amp; AI CRM Slots This Month</div>
+      <div class="topbar-pill"><span class="dot-live"></span> Taking 2 New Custom AI CRM &amp; Automation Builds This Month</div>
       <div><a href="tel:+919509707043">+91 95097 07043</a> · <a href="mailto:contact.scalecraft@gmail.com">contact.scalecraft@gmail.com</a> · India &amp; Global (INR / USD)</div>
     </div>
   </div>
@@ -639,14 +335,14 @@
       </a>
       <nav class="nav-links" id="navLinks">
         <a href="#services">Services</a>
-        <a href="#projects">Case Studies (4)</a>
-        <a href="#compare">Why Us</a>
+        <a href="#industries">Industries (6)</a>
+        <a href="#projects">Case Studies</a>
         <a href="#pricing">Pricing</a>
         <a href="#order">Build Brief</a>
       </nav>
       <div class="nav-actions">
         <a href="crm-demo.html" class="btn btn-ghost-light">Live CRM Demo</a>
-        <a href="#order" class="btn btn-primary">Get Quote</a>
+        <a href="#order" class="btn btn-primary">Book Free Audit</a>
         <button class="hamburger" id="menuBtn" aria-label="Toggle Menu">&#9776;</button>
       </div>
     </div>
@@ -656,41 +352,43 @@
   <section class="hero" id="top">
     <div class="container hero-grid">
       <div>
-        <div class="hero-badge">AI Industry CRMs · GST Billing · WhatsApp Automation</div>
-        <h1>Custom <span class="accent">AI CRMs &amp; Business Software</span> Shipped in 14 Days</h1>
+        <div class="hero-badge">AI Automation · Industry CRMs · GST &amp; ERP Sync</div>
+        <h1>Custom <span class="accent">AI Industry CRMs &amp; Software</span> Shipped in 14 Days</h1>
         <p class="hero-sub">
-          Stop paying per-seat SaaS fees or running your business on messy Excel sheets. We build fast, zero-clutter CRMs, billing tools, and AI automations tailored to your exact workflow.
+          We replace scattered WhatsApp chats, manual Excel sheets, and expensive per-seat SaaS tools with custom AI CRMs, GST billing engines, and automated workflows you own 100%.
         </p>
         <div class="hero-ctas">
-          <a href="crm-demo.html" class="btn btn-teal">Try Live CRM Demo (No Login)</a>
-          <a href="#projects" class="btn btn-ghost-light">See Our 4 Projects</a>
+          <a href="crm-demo.html" class="btn btn-teal">Try Interactive Live CRM Demo</a>
+          <a href="#industries" class="btn btn-ghost-light">Explore 6 Industry CRMs</a>
         </div>
         <div class="hero-proof">
-          <div class="proof-item"><strong>4 Projects</strong><span>EdTech, F&amp;B, Billing, AI CRM</span></div>
-          <div class="proof-item"><strong>14 Days</strong><span>Working MVP turnaround</span></div>
-          <div class="proof-item"><strong>&#8377;0 / seat</strong><span>100% client code ownership</span></div>
+          <div class="proof-item"><strong>6 Industries</strong><span>Pre-built CRM blueprints</span></div>
+          <div class="proof-item"><strong>4 Products</strong><span>EdTech, F&amp;B, Billing, CRM</span></div>
+          <div class="proof-item"><strong>14 Days</strong><span>First working live MVP</span></div>
+          <div class="proof-item"><strong>&#8377;0 / seat</strong><span>100% code ownership</span></div>
         </div>
       </div>
 
-      <!-- Interactive Mini Preview Card -->
       <div class="hero-card">
         <div class="hc-top">
           <div class="hc-dots"><i></i><i></i><i></i></div>
-          <span>ScaleCraft AI CRM · Live Preview</span>
+          <span>ScaleCraft AI Operator · Live Preview</span>
         </div>
         <div class="hc-ai-box">
-          <div class="hc-ai-label">AI Operator Command</div>
-          <div class="hc-ai-text" id="heroAiPrompt">"Show pending distributor invoices &gt; 7 days and draft WhatsApp reminders."</div>
+          <div class="hc-ai-label">Permission-Checked AI Operator</div>
+          <div class="hc-ai-text" id="heroAiPrompt">"Show overdue GST invoices &gt; 7 days and queue WhatsApp UPI reminders."</div>
         </div>
         <div class="hc-stats">
-          <div class="hc-stat"><small>Pipeline Value</small><b>&#8377;18.4L</b></div>
-          <div class="hc-stat"><small>Hours Saved / Wk</small><b>14.5 hrs</b></div>
+          <div class="hc-stat"><small>Active Pipeline</small><b>&#8377;18.4L</b></div>
+          <div class="hc-stat"><small>Manual Saved</small><b>14 hrs/wk</b></div>
+          <div class="hc-stat"><small>Audit Log</small><b>Reversible</b></div>
         </div>
         <div class="hc-rows">
-          <div class="hc-row"><span>Jai Ganga Traders — Invoice #408</span><span class="tag tag-green">Auto-Sent</span></div>
-          <div class="hc-row"><span>DineLoop Table Sync — 12 Orders</span><span class="tag tag-blue">Live Flow</span></div>
-          <div class="hc-row"><span>Lead Follow-up — WhatsApp Bot</span><span class="tag tag-amber">Approved</span></div>
+          <div class="hc-row"><span>Unified Inbox (WhatsApp + Call Summary)</span><span class="tag tag-green">Auto-Synced</span></div>
+          <div class="hc-row"><span>Lead 360° Drawer + 18% GST Tax PDF</span><span class="tag tag-blue">1-Click</span></div>
+          <div class="hc-row"><span>Approval Queue (Zero Blind AI Edits)</span><span class="tag tag-amber">1 Pending</span></div>
         </div>
+        <a href="crm-demo.html" class="btn btn-primary" style="width:100%;">Open Full 8-Module Interactive CRM &rarr;</a>
       </div>
     </div>
   </section>
@@ -699,9 +397,9 @@
   <section id="services">
     <div class="container">
       <div class="sec-head">
-        <span class="sec-kicker">What We Build</span>
-        <h2>Software Engineered for Speed, Automation &amp; Revenue</h2>
-        <p>Pick a system below — every build comes clean, mobile-friendly, and connected to WhatsApp + AI.</p>
+        <span class="sec-kicker">Core Capabilities</span>
+        <h2>Everything Needed to Automate Operations &amp; Scale Revenue</h2>
+        <p>Click any service below to inspect deliverables, AI capabilities, and stack.</p>
       </div>
       <div class="svc-wrap">
         <div class="svc-tabs" id="svcTabs"></div>
@@ -710,15 +408,59 @@
     </div>
   </section>
 
-  <!-- Projects / Case Studies -->
-  <section id="projects" class="projects-bg">
+  <!-- 6 Industry CRM Playbooks -->
+  <section id="industries" class="white-bg">
     <div class="container">
       <div class="sec-head">
-        <span class="sec-kicker">Proof of Work</span>
-        <h2>4 Real Products &amp; Industry Builds</h2>
-        <p>From CA exam prep PWAs to distributor billing and industry CRMs — built fast and focused on real operations.</p>
+        <span class="sec-kicker">Industry-Specific AI CRMs</span>
+        <h2>6 Vertical CRM Blueprints — Ready to Test Live</h2>
+        <p>Unlike generic CRMs, every industry gets custom modules and an AI Operator trained on its exact workflow. Click <strong>Open Live Demo</strong> to test any industry inside the CRM right now.</p>
+      </div>
+      <div class="ind-grid" id="indGrid"></div>
+    </div>
+  </section>
+
+  <!-- Case Studies -->
+  <section id="projects">
+    <div class="container">
+      <div class="sec-head">
+        <span class="sec-kicker">Proven Case Studies</span>
+        <h2>4 Real Products &amp; Business Systems Built</h2>
+        <p>Built fast, tested on real workflows, and engineered to eliminate repetitive manual work.</p>
       </div>
       <div class="proj-grid" id="projGrid"></div>
+    </div>
+  </section>
+
+  <!-- 4-Step Delivery Timeline -->
+  <section class="white-bg">
+    <div class="container">
+      <div class="sec-head">
+        <span class="sec-kicker">How We Ship Fast</span>
+        <h2>From Idea to Working Live Software in 14 Days</h2>
+      </div>
+      <div class="steps-grid">
+        <div class="step-card">
+          <span class="step-badge">Day 1–2</span>
+          <h4>Workflow Audit</h4>
+          <p>Map your WhatsApp chats, Excel sheets, billing format, and bottlenecks into a clean data schema.</p>
+        </div>
+        <div class="step-card">
+          <span class="step-badge">Day 3–5</span>
+          <h4>UI &amp; Module Design</h4>
+          <p>Design role-based screens for owner, sales, and field staff so anyone can use it with zero training.</p>
+        </div>
+        <div class="step-card">
+          <span class="step-badge">Day 6–12</span>
+          <h4>Build + AI &amp; WhatsApp</h4>
+          <p>Engineer pipeline, GST PDFs, Unified Inbox, and permission-checked AI Operator actions.</p>
+        </div>
+        <div class="step-card">
+          <span class="step-badge">Day 13–14</span>
+          <h4>Live Launch &amp; Handover</h4>
+          <p>Deploy on your cloud/domain with real data, full source code ownership, and 14 days free support.</p>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -726,8 +468,8 @@
   <section id="compare">
     <div class="container">
       <div class="sec-head">
-        <span class="sec-kicker">Why ScaleCraft Studios</span>
-        <h2>Built Better Than Generic SaaS &amp; Slow Agencies</h2>
+        <span class="sec-kicker">The ScaleCraft Edge</span>
+        <h2>Why Founders Switch From Generic SaaS &amp; Slow Agencies</h2>
       </div>
       <table class="cmp-table">
         <thead>
@@ -735,33 +477,33 @@
             <th>What Matters</th>
             <th class="hl">ScaleCraft Studios</th>
             <th>Traditional Agencies</th>
-            <th>Off-the-Shelf SaaS</th>
+            <th>Generic SaaS (Zoho/HubSpot)</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><strong>Delivery Speed</strong></td>
-            <td class="hl">Working MVP in 7–14 days</td>
-            <td>2–4 months</td>
-            <td>Weeks of messy setup</td>
+            <td><strong>Interactive Self-Serve Demo</strong></td>
+            <td class="hl">8-Module Live Demo (No Login Needed)</td>
+            <td>Static slides / 30-min sales call</td>
+            <td>Complex 14-day trial setup</td>
           </tr>
           <tr>
             <td><strong>Per-User Seat Fees</strong></td>
-            <td class="hl">&#8377;0 forever (you own the code)</td>
-            <td>Custom quote</td>
-            <td>&#8377;1,000–&#8377;4,000 / user / mo</td>
+            <td class="hl">&#8377;0 forever (you own code &amp; DB)</td>
+            <td>Often locked to vendor</td>
+            <td>&#8377;1,500–&#8377;4,500 / user / month</td>
           </tr>
           <tr>
-            <td><strong>AI &amp; WhatsApp Native</strong></td>
-            <td class="hl">Built-in AI Operator + WhatsApp flows</td>
-            <td>Extra paid add-on</td>
-            <td>Expensive third-party plugins</td>
+            <td><strong>AI Operator &amp; Safety</strong></td>
+            <td class="hl">Logged, permission-checked &amp; reversible</td>
+            <td>Paid extra later</td>
+            <td>Expensive enterprise tier only</td>
           </tr>
           <tr>
-            <td><strong>India Billing Ready</strong></td>
-            <td class="hl">GST invoices, UPI/Razorpay, distributor stock</td>
-            <td>Rarely optimized</td>
-            <td>US-centric templates</td>
+            <td><strong>India Billing &amp; WhatsApp</strong></td>
+            <td class="hl">18% CGST/SGST PDF, UPI, Tally sync</td>
+            <td>Rarely built-in</td>
+            <td>Third-party plugin overhead</td>
           </tr>
         </tbody>
       </table>
@@ -769,13 +511,13 @@
   </section>
 
   <!-- Pricing -->
-  <section id="pricing" class="projects-bg">
+  <section id="pricing" class="white-bg">
     <div class="container">
       <div class="pricing-top">
         <div class="sec-head" style="margin-bottom:0">
-          <span class="sec-kicker">Transparent Tiers</span>
-          <h2>Clear Starting Packages — No Guesswork</h2>
-          <p>Switch between INR (India) and USD (Global) anytime.</p>
+          <span class="sec-kicker">Transparent Pricing</span>
+          <h2>Clear Starting Packages — INR &amp; USD</h2>
+          <p>Switch currency anytime. Zero hidden per-seat fees.</p>
         </div>
         <div class="curr-toggle">
           <button class="curr-btn active" data-curr="INR">INR (&#8377;)</button>
@@ -786,39 +528,39 @@
     </div>
   </section>
 
-  <!-- Self-Serve Brief Builder (Zero Cold Calling!) -->
+  <!-- Instant Project Brief Builder -->
   <section id="order">
     <div class="container">
       <div class="sec-head">
-        <span class="sec-kicker">Start Without a Long Call</span>
+        <span class="sec-kicker">Zero-Friction Onboarding</span>
         <h2>Instant Project Brief Builder</h2>
-        <p>Select what you need below. It creates a clear scope summary you can send straight on WhatsApp or copy in 1 click.</p>
+        <p>Configure your exact software scope below and send it straight on WhatsApp or Email in 1 click — no long meetings required.</p>
       </div>
       <div class="est-grid">
         <div class="card-box">
           <div class="field">
             <label for="bName">Your Name / Business Name</label>
-            <input id="bName" type="text" placeholder="e.g., Daksh / Jai Ganga Traders" />
+            <input id="bName" type="text" placeholder="e.g., Daksh Advisory / Jai Ganga Traders" />
           </div>
           <div class="field">
-            <label for="bType">What do you want to build?</label>
+            <label for="bType">System Type</label>
             <select id="bType">
               <option value="AI-Powered Industry CRM">AI-Powered Industry CRM</option>
-              <option value="Billing &amp; GST Invoice Software">Billing &amp; GST Invoice Software</option>
-              <option value="WhatsApp Lead-Gen &amp; Automation System">WhatsApp Lead-Gen &amp; Automation System</option>
-              <option value="Restaurant / Operations Web App">Restaurant / Operations Web App</option>
-              <option value="Custom SaaS / EdTech PWA">Custom SaaS / EdTech PWA</option>
+              <option value="GST Billing &amp; Distributor Software">GST Billing &amp; Distributor Software</option>
+              <option value="WhatsApp Lead-Gen &amp; n8n Automation">WhatsApp Lead-Gen &amp; n8n Automation</option>
+              <option value="Restaurant / Hospitality App (DineLoop)">Restaurant / Hospitality App (DineLoop)</option>
+              <option value="EdTech / SaaS PWA (Studify-style)">EdTech / SaaS PWA (Studify-style)</option>
             </select>
           </div>
           <div class="field">
-            <label>Must-Have Features (Click to Toggle)</label>
+            <label>Must-Have Modules (Click to Toggle)</label>
             <div class="pill-checks" id="featPills">
-              <button type="button" class="pill-check on" data-feat="AI Operator Assistant">AI Operator Assistant</button>
-              <button type="button" class="pill-check on" data-feat="WhatsApp Auto Follow-ups">WhatsApp Auto Follow-ups</button>
-              <button type="button" class="pill-check" data-feat="GST Quote / Invoice PDF">GST Quote / Invoice PDF</button>
-              <button type="button" class="pill-check" data-feat="Staff Roles &amp; Mobile View">Staff Roles &amp; Mobile View</button>
-              <button type="button" class="pill-check" data-feat="Razorpay / UPI Tracking">Razorpay / UPI Tracking</button>
-              <button type="button" class="pill-check" data-feat="Auto Social Media Posting">Auto Social Media Posting</button>
+              <button type="button" class="pill-check on" data-feat="AI Operator + Approval Queue">AI Operator + Approval Queue</button>
+              <button type="button" class="pill-check on" data-feat="Unified WhatsApp Inbox">Unified WhatsApp Inbox</button>
+              <button type="button" class="pill-check on" data-feat="18% GST Quote &amp; Invoice PDF">18% GST Quote &amp; Invoice PDF</button>
+              <button type="button" class="pill-check" data-feat="Lead 360 Drawer + Kanban">Lead 360 Drawer + Kanban</button>
+              <button type="button" class="pill-check" data-feat="Mobile Field Staff View">Mobile Field Staff View</button>
+              <button type="button" class="pill-check" data-feat="Tally / Razorpay / n8n Sync">Tally / Razorpay / n8n Sync</button>
             </div>
           </div>
           <div class="field">
@@ -826,18 +568,18 @@
             <select id="bTimeline">
               <option value="Urgent MVP (7–10 Days)">Urgent MVP (7–10 Days)</option>
               <option value="Standard Build (14 Days)">Standard Build (14 Days)</option>
-              <option value="Full Custom System (3–4 Weeks)">Full Custom System (3–4 Weeks)</option>
+              <option value="Full Multi-Portal System (3–4 Weeks)">Full Multi-Portal System (3–4 Weeks)</option>
             </select>
           </div>
           <div class="field" style="margin-bottom:0">
-            <label for="bNotes">Short Note (Optional)</label>
-            <textarea id="bNotes" rows="2" placeholder="Any reference site or specific workflow..."></textarea>
+            <label for="bNotes">Custom Requirements / Reference</label>
+            <textarea id="bNotes" rows="2" placeholder="Describe your industry or modules you liked in our live demo..."></textarea>
           </div>
         </div>
 
         <div class="card-box">
           <h3 style="font-size:18px;font-weight:800;">Your Ready-to-Send Brief</h3>
-          <p style="font-size:13.5px;color:var(--muted);">No awkward calls needed — just send this brief directly.</p>
+          <p style="font-size:13px;color:var(--muted);">Send directly via WhatsApp or Email — we reply with a live prototype plan.</p>
           <div class="brief-box" id="briefOut"></div>
           <div style="display:flex;flex-wrap:wrap;gap:10px;">
             <a id="waSendBtn" href="#" target="_blank" rel="noopener" class="btn btn-teal">Send on WhatsApp</a>
@@ -853,8 +595,8 @@
   <section style="padding-top:10px;">
     <div class="container">
       <div class="sec-head">
-        <span class="sec-kicker">Questions</span>
-        <h2>Quick Answers</h2>
+        <span class="sec-kicker">FAQ</span>
+        <h2>Common Questions</h2>
       </div>
       <div class="faq-list" id="faqList"></div>
     </div>
@@ -863,22 +605,20 @@
   <!-- Footer -->
   <footer>
     <div class="container foot-inner">
-      <div><strong style="color:#fff;">ScaleCraft Studios</strong> — Custom AI CRMs, Billing &amp; Business Software</div>
+      <div><strong style="color:#fff;">ScaleCraft Studios</strong> — AI Industry CRMs, GST Billing &amp; Business Automation</div>
       <div><a href="tel:+919509707043">+91 95097 07043</a> · <a href="mailto:contact.scalecraft@gmail.com">contact.scalecraft@gmail.com</a></div>
     </div>
   </footer>
 
-  <!-- Floating WhatsApp CTA (Update phone number inside JS CONFIG) -->
-  <a id="waFloat" href="#" target="_blank" rel="noopener" class="wa-float">Chat on WhatsApp</a>
+  <a id="waFloat" href="#" target="_blank" rel="noopener" class="wa-float">WhatsApp Us</a>
 
-  <!-- Case Study / Demo Preview Modal -->
   <div class="modal-backdrop" id="modalBackdrop">
     <div class="modal" role="dialog" aria-modal="true">
       <div class="modal-head">
-        <h3 id="modalTitle" style="font-size:20px;font-weight:800;"></h3>
+        <h3 id="modalTitle" style="font-size:19px;font-weight:800;"></h3>
         <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
       </div>
-      <div id="modalBody" style="font-size:14.5px;color:var(--muted);display:flex;flex-direction:column;gap:12px;"></div>
+      <div id="modalBody" style="font-size:14px;color:var(--muted);display:flex;flex-direction:column;gap:12px;"></div>
     </div>
   </div>
 
@@ -892,199 +632,140 @@
 
       const SERVICES = [
         {
-          id: "crm",
-          num: "01",
-          tab: "AI-Powered Industry CRMs",
-          title: "Custom AI CRMs Built Around Your Workflow",
-          desc: "Unlike bloated SaaS CRMs that charge per seat, we engineer a clean CRM matched to your exact business stages — with a built-in AI Operator that summarizes chats, flags overdue bills, and drafts WhatsApp follow-ups.",
-          bullets: [
-            "1-Screen Drag & Drop Pipeline",
-            "Embedded AI Operator + Approval Log",
-            "Unified WhatsApp, Email & Call Notes",
-            "Mobile-Friendly Field Staff View"
-          ],
-          stack: ["Next.js / PWA", "Supabase / Postgres", "Gemini / OpenAI", "WhatsApp Cloud API"]
+          id: "crm", num: "01", tab: "AI-Powered Industry CRMs",
+          title: "Custom AI CRMs Built Around Your Industry",
+          desc: "No generic address books. We engineer 6–8 tailored modules with a built-in AI Operator that queries data, drafts follow-ups, and executes logged, reversible actions.",
+          bullets: ["Kanban + Table + Lead 360° Drawer", "Permission-Checked AI Operator + Undo", "Unified WhatsApp, Email & Call Summaries", "Desktop + Field Staff Mobile Mode"],
+          stack: ["Next.js / PWA", "PostgreSQL / Supabase", "Gemini / OpenAI", "WhatsApp Cloud API"]
         },
         {
-          id: "billing",
-          num: "02",
-          tab: "Billing & Distributor Software",
-          title: "GST Invoicing, Stock & Payment Tracking",
-          desc: "Modeled after real distributor workflows like Jai Ganga Traders — generate GST bills in seconds, track retailer dues, and automate payment reminders without manual spreadsheets.",
-          bullets: [
-            "1-Click GST Quote & Invoice PDF",
-            "Party-wise Outstanding & Credit Alerts",
-            "SKU / Batch & Beverage Stock Logs",
-            "UPI / Razorpay Payment Link Sync"
-          ],
-          stack: ["React / Vanilla PWA", "Postgres", "PDF Generator", "Razorpay / Tally Sync"]
+          id: "auto", num: "02", tab: "AI Automation & n8n Workflows",
+          title: "Eliminate Manual Data Entry Across Tools",
+          desc: "Connect your lead forms, WhatsApp, Google Sheets, and accounting software with self-healing n8n and webhook pipelines that run 24/7.",
+          bullets: ["10-Second Lead Capture & Routing", "Auto-Pause Drip on Customer Reply", "Document & PDF Data Extraction", "9 AM Automated Owner Daily Brief"],
+          stack: ["n8n", "Webhooks", "OpenAI / Gemini", "WhatsApp API"]
         },
         {
-          id: "auto",
-          num: "03",
-          tab: "Lead-Gen & WhatsApp Bots",
-          title: "Zero-Leak Lead Capture & Auto Follow-Ups",
-          desc: "Every Meta/Instagram/Website inquiry lands directly in your dashboard and gets an instant personalized WhatsApp reply within 10 seconds — so you never lose hot leads.",
-          bullets: [
-            "Instant WhatsApp Lead Auto-Responder",
-            "Smart Qualification & Booking Links",
-            "Auto-Pause When Customer Replies",
-            "Daily Owner Morning Summary"
-          ],
-          stack: ["n8n / Webhooks", "WhatsApp API", "AI Qualification", "Google Sheets / DB"]
+          id: "billing", num: "03", tab: "GST Billing & ERP Sync",
+          title: "Distributor Invoicing, Stock & Accounting Sync",
+          desc: "Generate 18% CGST/SGST tax PDFs in 1 click, track overdue retailer dues, and sync directly with Tally, Zoho Books, or NetSuite.",
+          bullets: ["Line-Item Quote & GST Tax PDF", "Overdue Ageing & Payment Nudges", "UPI / Razorpay Link Tracking", "Tally / Zoho Books Ledger Sync"],
+          stack: ["PostgreSQL", "PDF Engine", "Razorpay / UPI", "Tally / Zoho API"]
         },
         {
-          id: "apps",
-          num: "04",
-          tab: "SaaS, EdTech & Restaurant Apps",
-          title: "High-Speed Web Apps & PWAs That Scale",
-          desc: "Need a mobile-ready PWA like Studify CA or a restaurant ordering/loyalty flow like DineLoop? We ship production PWAs that work smoothly on both Android phones and desktops.",
-          bullets: [
-            "Installable PWA (No App Store Delay)",
-            "Role-Based Auth & Leaderboards",
-            "AI Tutor / Document Extraction",
-            "Fast UI Designed for Daily Use"
-          ],
+          id: "agents", num: "04", tab: "AI Sales & Support Agents",
+          title: "Smart WhatsApp & Voice Assistants",
+          desc: "Qualify incoming inquiries, answer catalog/SOP questions from your docs, and book qualified appointments directly into your CRM.",
+          bullets: ["24/7 Lead Qualification on WhatsApp", "Instant Catalog & Pricing Answers", "Call Transcript -> CRM Task Extraction", "Human Handoff Anytime"],
+          stack: ["Gemini / Claude", "WhatsApp Cloud API", "LangGraph", "Twilio / Exotel"]
+        },
+        {
+          id: "apps", num: "05", tab: "SaaS, EdTech & Restaurant Apps",
+          title: "High-Speed Custom PWAs & Portals",
+          desc: "From Studify CA's AI study engine to DineLoop's restaurant operations — we ship fast mobile-first web apps with zero App Store friction.",
+          bullets: ["Installable Android & Desktop PWA", "Role-Based Auth & Leaderboards", "AI Tutor / Content Automation", "Built & Shipped in 14 Days"],
           stack: ["PWA", "Supabase Auth & RLS", "Edge Functions", "Playwright Tested"]
+        }
+      ];
+
+      const INDUSTRIES = [
+        {
+          key: "distribution", code: "FD", name: "FMCG & Distribution",
+          desc: "Party-wise dues, beverage/SKU orders, GST bills, and automated retailer payment follow-ups.",
+          modules: ["Party Ledger", "Order Pipeline", "18% GST Bills", "Overdue Nudges", "Dispatch Tasks", "AI Operator"],
+          ai: ["Chase overdue bills > 7 days via WhatsApp", "Summarize distributor call promises", "Draft bulk order quotes in 1 click", "Flag low-margin SKUs"]
+        },
+        {
+          key: "construction", code: "CR", name: "Construction & Real Estate",
+          desc: "Tender & bid pipeline, daily site diary with photos, BOQ tracking, and subcontractor RA bills.",
+          modules: ["Tender Bids", "Site Diary", "BOQ Costing", "RA Billing", "Material POs", "Buyer Portal"],
+          ai: ["Draft weekly client report from site photos", "Extract quantities from tender PDFs", "Flag cost overruns early", "Chase pending RA approvals"]
+        },
+        {
+          key: "agency", code: "AG", name: "Marketing & IT Agencies",
+          desc: "Client onboarding, retainer tracking, content approvals, proposals, and automated reporting.",
+          modules: ["Deal Pipeline", "Proposals", "Retainers", "Tasks & Ops", "Unified Inbox", "Analytics"],
+          ai: ["Summarize client calls into tasks", "Forecast weighted pipeline revenue", "Draft proposals & follow-ups", "Spot unbilled scope items"]
+        },
+        {
+          key: "retail", code: "RJ", name: "Retail, D2C & Jewellery",
+          desc: "Unified customer profiles, custom karigar/order stages, live-rate quotes, and occasion offers.",
+          modules: ["VIP Profiles", "Custom Orders", "Live Quotes", "Loyalty Drip", "GST Invoices", "WhatsApp Bot"],
+          ai: ["Predict repurchase timing automatically", "Send birthday/anniversary WhatsApp offers", "Alert on slipping custom orders", "Write daily store sales brief"]
+        },
+        {
+          key: "restaurant", code: "DL", name: "Restaurants (DineLoop)",
+          desc: "Modernized F&B operations, QR table engagement, outlet onboarding, and weekend offer campaigns.",
+          modules: ["Outlet Leads", "QR Table Flow", "Weekend Campaigns", "Guest Feedback", "Billing", "Analytics"],
+          ai: ["Launch weekend combo WhatsApp blasts", "Summarize guest feedback trends", "Auto-reply to table & event inquiries", "Track outlet repeat visits"]
+        },
+        {
+          key: "franchise", code: "FR", name: "Franchise Networks",
+          desc: "Franchise sales pipeline, outlet onboarding checklists, photo SOP audits, and royalty billing.",
+          modules: ["Partner Sales", "SOP Audits", "Royalty Bills", "Supply Orders", "Outlet Health", "AI Manual Bot"],
+          ai: ["Qualify new franchise leads automatically", "Summarize outlet photo audits", "Flag falling branch scores early", "Answer SOP questions from manuals"]
         }
       ];
 
       const PROJECTS = [
         {
-          id: "studify",
-          name: "Studify CA",
-          badge: "Live EdTech PWA",
-          badgeCls: "live",
+          id: "studify", name: "Studify CA", badge: "Live EdTech PWA", badgeCls: "live",
           category: "EdTech · AI Study OS",
           problem: "CA students juggle scattered ICAI PDFs, MCQs, timers, and zero accountability.",
-          built: "Full single-file PWA with Supabase backend, AI Tutor, ICAI paper sync, homework engine, global leaderboard, and automated Instagram content pipeline.",
-          impact: "Production-ready mobile & desktop PWA with real student workflows.",
-          details: [
-            "Integrated Gemini Vision & automated paper/MCQ extraction.",
-            "Built strict focus timer, Buddy Lock, and streak leaderboard.",
-            "Added automated social posting workflow for organic reach."
-          ]
+          built: "Full single-file PWA with Supabase backend, AI Tutor, ICAI paper sync, homework engine, leaderboard, and automated Instagram posting.",
+          impact: "Production-ready Android & desktop PWA with real student workflows.",
+          details: ["Integrated Gemini Vision for automated MCQ extraction.", "Built strict focus timer, Buddy Lock, and global leaderboard.", "Automated Instagram content loop for organic student discovery."]
         },
         {
-          id: "dineloop",
-          name: "DineLoop",
-          badge: "Hospitality Build",
-          badgeCls: "live",
+          id: "dineloop", name: "DineLoop", badge: "Hospitality Build", badgeCls: "live",
           category: "Restaurants · UI/UX Upgrade",
-          problem: "Traditional restaurant software feels clunky, slow, and hard for staff on rush hours.",
-          built: "Redesigned restaurant operations & customer experience platform focused on speed, clean visual hierarchy, and higher repeat visits.",
-          impact: "Modern, conversion-focused interface built to outperform legacy tools.",
-          details: [
-            "Streamlined menu, table, and guest engagement touchpoints.",
-            "Mobile-first controls so staff need zero training.",
-            "Ready to customize per cafe, cloud kitchen, or dine-in chain."
-          ]
+          problem: "Legacy restaurant software is clunky, slow, and hard for staff during peak hours.",
+          built: "Redesigned restaurant operations & guest engagement platform built for speed, clean visual UI, and higher repeat diners.",
+          impact: "Modern, conversion-focused interface built to beat legacy tools.",
+          details: ["Streamlined table, menu, and repeat loyalty flows.", "Mobile-first controls requiring zero staff training.", "Ready to customize per cafe, banquet, or cloud kitchen."]
         },
         {
-          id: "jaiganga",
-          name: "Jai Ganga Traders",
-          badge: "Real Business Use",
-          badgeCls: "live",
+          id: "jaiganga", name: "Jai Ganga Traders", badge: "Real Business Use", badgeCls: "live",
           category: "FMCG & Beverage Distribution",
-          problem: "Distributor agencies lose hours manually creating bills and tracking retailer payments.",
-          built: "Custom Billing & Invoice Software tailored for beverage distribution — fast item entry, clean invoice generation, and accurate party records.",
-          impact: "Eliminated repetitive manual billing for daily distributor dispatches.",
-          details: [
-            "Built around real wholesale/distributor SKU workflows.",
-            "Fast invoice creation with clean printable output.",
-            "Expandable with WhatsApp payment reminders & GST exports."
-          ]
+          problem: "Distributor agencies lose hours manually writing invoices and tracking retailer payments.",
+          built: "Custom Billing & Invoice Software tailored for beverage distribution — fast item entry, clean GST billing, and party records.",
+          impact: "Eliminated repetitive manual billing across daily dispatches.",
+          details: ["Built around wholesale beverage SKU workflows.", "Clean printable GST invoice output.", "Expandable with WhatsApp overdue reminders."]
         },
         {
-          id: "crm",
-          name: "ScaleCraft AI CRM",
-          badge: "4th Project · Live Demo",
-          badgeCls: "live",
+          id: "crm", name: "ScaleCraft AI CRM", badge: "Live 8-Module Demo", badgeCls: "live",
           category: "Flagship AI Industry CRM",
-          problem: "Standard CRMs require too much manual typing and don't connect AI actions with Indian SMB tools.",
-          built: "Next-gen industry CRM (inspired by & built to surpass agency benchmarks) featuring an embedded AI Operator, unified WhatsApp inbox, and 1-click GST quotes.",
-          impact: "Interactive live demo is ready — zero login required to test.",
-          details: [
-            "AI Operator checks overdue invoices, summarizes calls, and drafts follow-ups.",
-            "Permission-checked, reversible AI actions so business owners stay in control.",
-            "Customizable for agencies, distributors, clinics, real estate, and D2C."
-          ]
+          problem: "Standard CRMs demand heavy manual typing and don't fit Indian SMB + WhatsApp workflows.",
+          built: "Enterprise 8-module AI CRM with 6 industry presets, Lead 360° drawer, Unified Inbox, AI Operator with Undo log, Analytics, and 18% GST Tax PDF.",
+          impact: "Self-serve interactive demo live now — zero login required.",
+          details: ["6 instant industry presets (?industry=distribution, construction, agency, etc.).", "Permission-checked Approval Queue + 1-click Undo audit log.", "Desktop + Mobile Field Staff preview toggle."]
         }
       ];
 
       const PRICING = {
         INR: [
-          {
-            name: "Starter MVP",
-            price: "₹14,999",
-            sub: "7–10 days · 1 core workflow",
-            featured: false,
-            items: ["Clean custom web app / billing tool", "Mobile-responsive UI", "WhatsApp inquiry button", "Full source code ownership"]
-          },
-          {
-            name: "Growth AI CRM",
-            price: "₹34,999",
-            sub: "14 days · Most popular",
-            featured: true,
-            items: ["6 custom industry CRM modules", "Embedded AI Operator assistant", "WhatsApp auto follow-ups + GST PDF", "Staff login + owner analytics", "14 days free post-launch support"]
-          },
-          {
-            name: "Custom Scale System",
-            price: "₹65,000+",
-            sub: "3–4 weeks · Multi-branch / ERP",
-            featured: false,
-            items: ["Multi-role portals & automation", "Tally / Razorpay / API integrations", "AI voice / chat agent setup", "Dedicated priority sprint support"]
-          }
+          { name: "Starter MVP", price: "₹14,999", sub: "7–10 days · 1 core workflow", featured: false, items: ["Custom web app / GST billing tool", "Mobile-responsive PWA UI", "WhatsApp inquiry integration", "100% source code ownership"] },
+          { name: "Growth AI CRM", price: "₹34,999", sub: "14 days · Most popular", featured: true, items: ["6–8 custom industry CRM modules", "Permission-checked AI Operator + Undo", "Unified WhatsApp Inbox + 18% GST PDF", "Lead 360° drawer + analytics", "14 days free post-launch support"] },
+          { name: "Custom Scale System", price: "₹65,000+", sub: "3–4 weeks · Multi-branch / ERP", featured: false, items: ["Multi-role portals & n8n automation", "Tally / Zoho Books / Razorpay sync", "Custom AI voice / WhatsApp agents", "Priority sprint delivery"] }
         ],
         USD: [
-          {
-            name: "Starter MVP",
-            price: "$299",
-            sub: "7–10 days · 1 core workflow",
-            featured: false,
-            items: ["Clean custom web app / tool", "Mobile-responsive UI", "Lead capture integration", "100% source code ownership"]
-          },
-          {
-            name: "Growth AI CRM",
-            price: "$699",
-            sub: "14 days · Most popular",
-            featured: true,
-            items: ["6 custom industry CRM modules", "Embedded AI Operator assistant", "WhatsApp / Email auto follow-ups", "Team roles + owner analytics", "14 days free post-launch support"]
-          },
-          {
-            name: "Custom Scale System",
-            price: "$1,499+",
-            sub: "3–4 weeks · Full automation",
-            featured: false,
-            items: ["Multi-portal custom architecture", "CRM + ERP / Stripe integrations", "Custom AI agents & workflows", "Priority sprint delivery"]
-          }
+          { name: "Starter MVP", price: "$299", sub: "7–10 days · 1 core workflow", featured: false, items: ["Custom web app / workflow tool", "Mobile-responsive PWA UI", "Lead capture integration", "100% source code ownership"] },
+          { name: "Growth AI CRM", price: "$699", sub: "14 days · Most popular", featured: true, items: ["6–8 custom industry CRM modules", "Permission-checked AI Operator + Undo", "Unified Inbox + PDF invoicing", "Lead 360° drawer + analytics", "14 days free post-launch support"] },
+          { name: "Custom Scale System", price: "$1,499+", sub: "3–4 weeks · Full automation", featured: false, items: ["Multi-portal custom architecture", "NetSuite / Salesforce / Stripe sync", "Custom AI agents & workflows", "Priority sprint delivery"] }
         ]
       };
 
       const FAQS = [
-        {
-          q: "Do I have to pay monthly per-user fees?",
-          a: "No. Once we build your CRM or billing software, you own the code and database. Add 5 or 50 team members with zero per-seat charges."
-        },
-        {
-          q: "How fast can you launch my first working version?",
-          a: "Starter MVPs ship in 7–10 days, and a full 6-module AI CRM ships in 14 days so your team can test it on real data immediately."
-        },
-        {
-          q: "Can I order without getting on long sales calls?",
-          a: "Yes! Use the Instant Project Brief Builder above — pick your modules, click 'Send on WhatsApp', and we handle everything asynchronously or via short voice notes."
-        },
-        {
-          q: "Will this work on Android phones for my field/sales staff?",
-          a: "Yes, every app is built mobile-first as a fast PWA so staff can update leads, check invoices, and trigger WhatsApp messages straight from their phone."
-        }
+        { q: "Do I pay monthly per-user seat fees?", a: "No. Once built, you own the source code and database. Add 5 or 100 team members with zero per-seat charges." },
+        { q: "Can clients test the CRM before booking?", a: "Yes — click 'Try Interactive Live CRM Demo' above to test all 6 industries, Lead 360° drawer, AI Operator, and GST PDFs with zero login." },
+        { q: "How fast do you deliver a custom build?", a: "Starter MVPs ship in 7–10 days and full 6–8 module AI CRMs go live on real data in 14 days." },
+        { q: "Can I order asynchronously without long calls?", a: "Yes! Use the Instant Project Brief Builder above and click Send on WhatsApp or Email." }
       ];
 
-      // Render Services
+      // Services
       let activeSvc = 0;
       const svcTabsEl = document.getElementById("svcTabs");
       const svcPanelEl = document.getElementById("svcPanel");
-
       function renderServices() {
         svcTabsEl.innerHTML = SERVICES.map((s, idx) => `
           <button type="button" class="svc-tab ${idx === activeSvc ? "active" : ""}" data-svc="${idx}">
@@ -1092,15 +773,12 @@
             <span class="svc-tab-title">${s.tab}</span>
           </button>
         `).join("");
-
         const cur = SERVICES[activeSvc];
         svcPanelEl.innerHTML = `
           <div>
             <h3>${cur.title}</h3>
             <p>${cur.desc}</p>
-            <ul class="svc-bullets">
-              ${cur.bullets.map(b => `<li>&#10003; ${b}</li>`).join("")}
-            </ul>
+            <ul class="svc-bullets">${cur.bullets.map(b => `<li>&#10003; ${b}</li>`).join("")}</ul>
           </div>
           <div class="svc-stack">
             <span style="font-size:12px;font-weight:700;color:var(--muted);">Tech Stack:</span>
@@ -1116,7 +794,24 @@
       });
       renderServices();
 
-      // Render Projects
+      // Industries
+      const indGridEl = document.getElementById("indGrid");
+      indGridEl.innerHTML = INDUSTRIES.map(ind => `
+        <article class="ind-card">
+          <div class="ind-head">
+            <div class="ind-ico">${ind.code}</div>
+            <button type="button" class="btn btn-outline" style="padding:6px 11px;font-size:12px;" data-ind="${ind.key}">6 Modules &amp; AI</button>
+          </div>
+          <h3>${ind.name}</h3>
+          <p>${ind.desc}</p>
+          <div class="ind-mods">${ind.modules.map(m => `<span class="ind-mod">${m}</span>`).join("")}</div>
+          <div class="ind-foot">
+            <a href="crm-demo.html?industry=${ind.key}" class="btn btn-primary" style="flex:1;padding:9px 12px;">Open Live Demo &rarr;</a>
+          </div>
+        </article>
+      `).join("");
+
+      // Projects
       const projGridEl = document.getElementById("projGrid");
       projGridEl.innerHTML = PROJECTS.map(p => `
         <article class="proj-card">
@@ -1127,17 +822,19 @@
           <h3>${p.name}</h3>
           <div class="proj-points">
             <div><strong>Problem:</strong> ${p.problem}</div>
-            <div><strong>What We Built:</strong> ${p.built}</div>
+            <div><strong>Built:</strong> ${p.built}</div>
             <div><strong>Outcome:</strong> ${p.impact}</div>
           </div>
           <div class="proj-foot">
             <button type="button" class="btn btn-outline" data-proj="${p.id}">View Architecture</button>
-            <a href="#order" class="btn btn-primary" data-prefill="${p.name}">Build Similar</a>
+            ${p.id === "crm"
+              ? `<a href="crm-demo.html" class="btn btn-teal">Launch Live Demo</a>`
+              : `<a href="#order" class="btn btn-primary" data-prefill="${p.name}">Build Similar</a>`}
           </div>
         </article>
       `).join("");
 
-      // Render Pricing
+      // Pricing
       let activeCurr = "INR";
       const priceGridEl = document.getElementById("priceGrid");
       function renderPricing() {
@@ -1145,13 +842,11 @@
           <div class="price-card ${tier.featured ? "featured" : ""}">
             <div style="display:flex;justify-content:space-between;align-items:center;">
               <strong style="font-size:17px;">${tier.name}</strong>
-              ${tier.featured ? '<span class="tag tag-green">Best Value</span>' : ""}
+              ${tier.featured ? '<span class="tag tag-green">Most Popular</span>' : ""}
             </div>
             <div class="price-val">${tier.price}</div>
             <p style="font-size:13px;color:${tier.featured ? "#94a3b8" : "var(--muted)"};">${tier.sub}</p>
-            <ul>
-              ${tier.items.map(it => `<li>&#10003; ${it}</li>`).join("")}
-            </ul>
+            <ul>${tier.items.map(it => `<li>&#10003; ${it}</li>`).join("")}</ul>
             <a href="#order" class="btn ${tier.featured ? "btn-teal" : "btn-outline"}" style="margin-top:auto;">Select ${tier.name}</a>
           </div>
         `).join("");
@@ -1177,20 +872,19 @@
       const waFloat = document.getElementById("waFloat");
 
       function updateBrief() {
-        const feats = Array.from(document.querySelectorAll("#featPills .pill-check.on"))
-          .map(el => "• " + el.dataset.feat).join("\n") || "• Standard MVP Scope";
+        const feats = Array.from(document.querySelectorAll("#featPills .pill-check.on")).map(el => "• " + el.dataset.feat).join("\n") || "• Standard MVP Scope";
         const msg =
 `Hi ${CONFIG.agencyName}, I want to build a custom system:
 Name/Business: ${bName.value.trim() || "Not specified"}
-Project Type: ${bType.value}
+System Type: ${bType.value}
 Timeline: ${bTimeline.value}
-Features:
+Modules:
 ${feats}${bNotes.value.trim() ? "\nNotes: " + bNotes.value.trim() : ""}`;
         briefOut.textContent = msg;
         waSendBtn.href = `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(msg)}`;
         emailSendBtn.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent("Project Brief: " + bType.value)}&body=${encodeURIComponent(msg)}`;
       }
-      waFloat.href = `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent("Hi ScaleCraft Studios, I want to discuss a custom CRM / software build.")}`;
+      waFloat.href = `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent("Hi ScaleCraft Studios, I saw your live CRM demo and want to discuss a build.")}`;
 
       document.getElementById("featPills").addEventListener("click", (e) => {
         const pill = e.target.closest(".pill-check");
@@ -1201,7 +895,7 @@ ${feats}${bNotes.value.trim() ? "\nNotes: " + bNotes.value.trim() : ""}`;
       [bName, bType, bTimeline, bNotes].forEach(el => el.addEventListener("input", updateBrief));
       document.querySelectorAll("[data-prefill]").forEach(btn => {
         btn.addEventListener("click", () => {
-          bNotes.value = `Interested in something similar to ${btn.dataset.prefill}.`;
+          bNotes.value = `Interested in a build similar to ${btn.dataset.prefill}.`;
           updateBrief();
         });
       });
@@ -1215,7 +909,7 @@ ${feats}${bNotes.value.trim() ? "\nNotes: " + bNotes.value.trim() : ""}`;
       });
       updateBrief();
 
-      // FAQs
+      // FAQ
       const faqEl = document.getElementById("faqList");
       faqEl.innerHTML = FAQS.map((f, i) => `
         <div class="faq-item ${i === 0 ? "open" : ""}">
@@ -1225,8 +919,7 @@ ${feats}${bNotes.value.trim() ? "\nNotes: " + bNotes.value.trim() : ""}`;
       `).join("");
       faqEl.addEventListener("click", (e) => {
         const q = e.target.closest(".faq-q");
-        if (!q) return;
-        q.parentElement.classList.toggle("open");
+        if (q) q.parentElement.classList.toggle("open");
       });
 
       // Modal
@@ -1242,18 +935,20 @@ ${feats}${bNotes.value.trim() ? "\nNotes: " + bNotes.value.trim() : ""}`;
       document.getElementById("modalClose").addEventListener("click", closeModal);
       backdrop.addEventListener("click", (e) => { if (e.target === backdrop) closeModal(); });
 
-      document.querySelectorAll("[data-open-modal='demo']").forEach(btn => {
-        btn.addEventListener("click", () => {
-          openModal("ScaleCraft AI CRM — Interactive Demo (Step 2)", `
-            <p>Our live no-login AI CRM demo is the very next build! It will include:</p>
-            <ul style="padding-left:18px;display:flex;flex-direction:column;gap:6px;color:#0f172a;">
-              <li><strong>6 Industry Modules:</strong> Leads, Pipeline, Unified Inbox, Tasks, GST Quotes/Invoices, Analytics</li>
-              <li><strong>Working AI Operator:</strong> Natural-language commands with 1-click approve/undo</li>
-              <li><strong>WhatsApp + Invoice Flow:</strong> Ready to pitch directly to Daksh's company &amp; new clients</li>
-            </ul>
-            <a href="#order" class="btn btn-primary" onclick="document.getElementById('modalBackdrop').classList.remove('open')">Customize Your CRM Scope</a>
-          `);
-        });
+      indGridEl.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-ind]");
+        if (!btn) return;
+        const ind = INDUSTRIES.find(x => x.key === btn.dataset.ind);
+        if (!ind) return;
+        openModal(`${ind.name} — CRM Blueprint`, `
+          <p>${ind.desc}</p>
+          <div><strong style="color:#0f172a;">6 Core Modules:</strong> ${ind.modules.join(" · ")}</div>
+          <div><strong style="color:#0f172a;">AI Operator Actions (Permission-Checked):</strong></div>
+          <ul style="padding-left:18px;display:flex;flex-direction:column;gap:5px;color:#0f172a;">
+            ${ind.ai.map(a => `<li>${a}</li>`).join("")}
+          </ul>
+          <a href="crm-demo.html?industry=${ind.key}" class="btn btn-primary">Test ${ind.name} Inside Live CRM &rarr;</a>
+        `);
       });
 
       projGridEl.addEventListener("click", (e) => {
@@ -1270,16 +965,14 @@ ${feats}${bNotes.value.trim() ? "\nNotes: " + bNotes.value.trim() : ""}`;
         `);
       });
 
-      // Mobile menu
       document.getElementById("menuBtn").addEventListener("click", () => {
         document.getElementById("navLinks").classList.toggle("mobile-open");
       });
 
-      // Rotate hero AI prompt subtly
       const prompts = [
-        '"Show pending distributor invoices > 7 days and draft WhatsApp reminders."',
-        '"Summarize today\'s 12 restaurant leads and assign follow-ups."',
-        '"Generate a GST quote for Daksh\'s client in 1 click."'
+        '"Show overdue GST invoices > 7 days and queue WhatsApp UPI reminders."',
+        '"Summarize Daksh\'s site/call notes and extract follow-up tasks."',
+        '"Forecast pipeline revenue for Quote Sent deals this week."'
       ];
       let pi = 0;
       setInterval(() => {
