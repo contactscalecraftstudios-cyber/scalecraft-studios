@@ -441,6 +441,7 @@
     </div>
 
     <div class="side-foot">
+      <button class="side-link" id="cloudAuthBtn" type="button" style="background:rgba(37,99,235,0.28);color:#bfdbfe;">Connect Cloud Backend</button>
       <button class="side-link" id="resetDemoBtn" type="button">Reset Sample Data</button>
       <a class="side-link" href="index.html" style="background:rgba(20,184,166,0.18);color:#5eead4;">&larr; Back to ScaleCraft Site</a>
     </div>
@@ -452,7 +453,7 @@
       <div class="top-left">
         <button class="mob-toggle" id="mobToggle" aria-label="Menu">&#9776;</button>
         <div class="page-title" id="pageTitle">Owner Dashboard</div>
-        <span class="demo-pill"><span class="dot-live"></span> Live Demo</span>
+        <span class="demo-pill" id="cloudPill"><span class="dot-live"></span> Live Demo</span>
       </div>
       <div class="top-right">
         <div class="search-box">
@@ -498,7 +499,24 @@
   <script>
     (function () {
       const STORAGE_KEY = "scalecraft_crm_enterprise_v2";
+      const CFG_KEY = "scalecraft_supabase_cfg";
+      const AUTH_KEY = "scalecraft_supabase_auth";
       const STAGES = ["New Lead", "Qualified", "Quote Sent", "Won"];
+
+      // Paste your Supabase URL & Anon Key here once (or set inside Connect Cloud Backend modal)
+      const DEFAULT_CLOUD = { url: "", anonKey: "" };
+      function getCloudCfg() {
+        try {
+          const s = JSON.parse(localStorage.getItem(CFG_KEY) || "{}");
+          return {
+            url: (DEFAULT_CLOUD.url || s.url || "").replace(/\/$/, ""),
+            anonKey: DEFAULT_CLOUD.anonKey || s.anonKey || ""
+          };
+        } catch (_) { return { ...DEFAULT_CLOUD }; }
+      }
+      function getAuth() {
+        try { return JSON.parse(localStorage.getItem(AUTH_KEY) || "null"); } catch (_) { return null; }
+      }
 
       const PRESETS = {
         distribution: {
@@ -745,8 +763,59 @@
         }
       } catch (_) {}
 
+      let syncTimer;
       function save() {
         try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (_) {}
+        const cfg = getCloudCfg();
+        const auth = getAuth();
+        if (cfg.url && cfg.anonKey && auth && auth.access_token && auth.user?.id) {
+          clearTimeout(syncTimer);
+          syncTimer = setTimeout(() => pushWorkspaceToCloud(), 600);
+        }
+      }
+
+      async function pushWorkspaceToCloud() {
+        const cfg = getCloudCfg();
+        const auth = getAuth();
+        if (!cfg.url || !cfg.anonKey || !auth?.access_token || !auth?.user?.id) return;
+        try {
+          await fetch(`${cfg.url}/rest/v1/crm_workspaces`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "apikey": cfg.anonKey,
+              "Authorization": `Bearer ${auth.access_token}`,
+              "Prefer": "resolution=merge-duplicates"
+            },
+            body: JSON.stringify({
+              user_id: auth.user.id,
+              preset: state.preset,
+              data: state,
+              updated_at: new Date().toISOString()
+            })
+          });
+        } catch (_) {}
+      }
+
+      async function pullWorkspaceFromCloud() {
+        const cfg = getCloudCfg();
+        const auth = getAuth();
+        if (!cfg.url || !cfg.anonKey || !auth?.access_token || !auth?.user?.id) return false;
+        try {
+          const res = await fetch(`${cfg.url}/rest/v1/crm_workspaces?user_id=eq.${auth.user.id}&select=data`, {
+            headers: { "apikey": cfg.anonKey, "Authorization": `Bearer ${auth.access_token}` }
+          });
+          if (!res.ok) return false;
+          const rows = await res.json();
+          if (rows && rows[0] && rows[0].data && rows[0].data.leads) {
+            state = rows[0].data;
+            indSelect.value = state.preset || "distribution";
+            save();
+            render();
+            return true;
+          }
+        } catch (_) {}
+        return false;
       }
 
       const TAB_TITLES = {
@@ -795,6 +864,20 @@
         workspaceWrap.classList.toggle("mobile-frame", !!state.mobilePreview);
         const mobBtn = document.getElementById("mobilePreviewBtn");
         mobBtn.textContent = state.mobilePreview ? "Desktop View" : "Mobile View";
+        const auth = getAuth();
+        const cfg = getCloudCfg();
+        const pill = document.getElementById("cloudPill");
+        const cloudBtn = document.getElementById("cloudAuthBtn");
+        if (cfg.url && auth?.access_token) {
+          pill.innerHTML = `<span class="dot-live"></span> Cloud Synced (${auth.user?.email || "User"})`;
+          cloudBtn.textContent = "Cloud Workspace ✓";
+        } else if (cfg.url) {
+          pill.innerHTML = `<span class="dot-live"></span> Backend Ready (Demo)`;
+          cloudBtn.textContent = "Sign In Cloud CRM";
+        } else {
+          pill.innerHTML = `<span class="dot-live"></span> Live Demo`;
+          cloudBtn.textContent = "Connect Cloud Backend";
+        }
       }
 
       function filteredLeads() {
@@ -900,9 +983,12 @@
         mainEl.innerHTML = `
           <div class="view-bar">
             <p style="font-size:13px;color:var(--muted);">Click any card title to open the <strong>360° Lead Drawer</strong> (notes, tasks, WhatsApp &amp; quote).</p>
-            <div class="seg-toggle">
-              <button class="seg-btn ${state.pipelineView === "kanban" ? "active" : ""}" data-pview="kanban">Kanban Board</button>
-              <button class="seg-btn ${state.pipelineView === "list" ? "active" : ""}" data-pview="list">Table View</button>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+              <button class="btn btn-outline" id="exportLeadsBtn" type="button">Export CSV</button>
+              <div class="seg-toggle">
+                <button class="seg-btn ${state.pipelineView === "kanban" ? "active" : ""}" data-pview="kanban">Kanban Board</button>
+                <button class="seg-btn ${state.pipelineView === "list" ? "active" : ""}" data-pview="list">Table View</button>
+              </div>
             </div>
           </div>
 
@@ -1093,7 +1179,10 @@
           <div class="card">
             <div class="card-head">
               <h3>GST Quotes &amp; Tax Invoices (CGST 9% + SGST 9%)</h3>
-              <button class="btn btn-primary" id="newInvBtn" type="button">+ New GST Invoice</button>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="btn btn-outline" id="exportInvBtn" type="button">Export CSV</button>
+                <button class="btn btn-primary" id="newInvBtn" type="button">+ New GST Invoice</button>
+              </div>
             </div>
             <table>
               <thead><tr><th>Invoice #</th><th>Client</th><th>Base</th><th>18% GST</th><th>Grand Total</th><th>Status</th><th>Actions</th></tr></thead>
@@ -1219,7 +1308,8 @@
 
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
             <button class="btn btn-teal" id="drawerQuoteBtn" type="button">+ Create GST Quote</button>
-            <button class="btn btn-outline" id="drawerWaBtn" type="button">Queue WhatsApp Follow-up</button>
+            <button class="btn btn-outline" id="drawerWaBtn" type="button">Queue AI Follow-up</button>
+            <a class="btn btn-primary" href="https://wa.me/${String(lead.phone || "").replace(/\D/g, "")}?text=${encodeURIComponent(`Hi ${lead.contact}, following up from ScaleCraft CRM regarding ${lead.note}`)}" target="_blank" rel="noopener">Open WhatsApp</a>
           </div>
 
           <div>
@@ -1281,6 +1371,135 @@
         save();
         render();
         showToast("Demo sample data reset");
+      });
+
+      // Cloud Backend Setup + Supabase Auth + Pull Website Inquiries
+      document.getElementById("cloudAuthBtn").addEventListener("click", () => {
+        const cfg = getCloudCfg();
+        const auth = getAuth();
+        openModal("ScaleCraft Cloud Backend (Supabase)", `
+          <form id="cloudCfgForm" style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border);">
+            <div class="field"><label>Supabase Project URL</label><input id="cfgUrl" placeholder="https://xxxx.supabase.co" value="${cfg.url || ""}" required /></div>
+            <div class="field"><label>Supabase Anon Public Key</label><input id="cfgKey" placeholder="eyJhbGciOi..." value="${cfg.anonKey || ""}" required /></div>
+            <button class="btn btn-outline" type="submit" style="width:100%;">Save Backend Keys</button>
+          </form>
+          ${auth?.access_token ? `
+            <div style="background:#dcfce7;color:#166534;padding:10px 12px;border-radius:10px;font-size:13px;margin-bottom:10px;">
+              Signed in as <strong>${auth.user?.email || "User"}</strong>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <button class="btn btn-teal" id="pullWebLeadsBtn" type="button">Import Website Brief Inquiries into Leads</button>
+              <button class="btn btn-primary" id="forceSyncBtn" type="button">Sync Workspace Now</button>
+              <button class="btn btn-danger" id="signOutBtn" type="button">Sign Out (Back to Demo Mode)</button>
+            </div>
+          ` : `
+            <form id="cloudLoginForm">
+              <div class="field"><label>Workspace Email</label><input id="authEmail" type="email" required placeholder="contact.scalecraft@gmail.com" /></div>
+              <div class="field"><label>Password (min 6 chars)</label><input id="authPass" type="password" required minlength="6" /></div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                <button class="btn btn-primary" type="submit" data-auth-mode="login">Sign In</button>
+                <button class="btn btn-teal" type="button" id="cloudSignupBtn">Create Account</button>
+              </div>
+            </form>
+          `}
+        `);
+
+        document.getElementById("cloudCfgForm").addEventListener("submit", (ev) => {
+          ev.preventDefault();
+          const url = document.getElementById("cfgUrl").value.trim().replace(/\/$/, "");
+          const anonKey = document.getElementById("cfgKey").value.trim();
+          localStorage.setItem(CFG_KEY, JSON.stringify({ url, anonKey }));
+          updateShell();
+          showToast("Supabase URL & Key saved!");
+        });
+
+        async function doAuth(mode) {
+          const curCfg = getCloudCfg();
+          if (!curCfg.url || !curCfg.anonKey) { showToast("Save Supabase URL & Anon Key first"); return; }
+          const email = document.getElementById("authEmail").value.trim();
+          const password = document.getElementById("authPass").value;
+          const endpoint = mode === "signup" ? "/auth/v1/signup" : "/auth/v1/token?grant_type=password";
+          try {
+            const res = await fetch(`${curCfg.url}${endpoint}`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json", "apikey": curCfg.anonKey },
+              body: JSON.stringify({ email, password })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.msg || data.error_description || "Auth failed");
+            if (data.access_token) {
+              localStorage.setItem(AUTH_KEY, JSON.stringify(data));
+              const loaded = await pullWorkspaceFromCloud();
+              if (!loaded) await pushWorkspaceToCloud();
+              closeModal();
+              render();
+              showToast("Cloud Workspace connected!");
+            } else {
+              showToast("Account created! Check email or Sign In.");
+            }
+          } catch (err) {
+            showToast(err.message);
+          }
+        }
+
+        const loginForm = document.getElementById("cloudLoginForm");
+        if (loginForm) {
+          loginForm.addEventListener("submit", (ev) => { ev.preventDefault(); doAuth("login"); });
+          document.getElementById("cloudSignupBtn").addEventListener("click", () => doAuth("signup"));
+        }
+
+        const pullBtn = document.getElementById("pullWebLeadsBtn");
+        if (pullBtn) {
+          pullBtn.addEventListener("click", async () => {
+            const curCfg = getCloudCfg();
+            const curAuth = getAuth();
+            try {
+              const res = await fetch(`${curCfg.url}/rest/v1/project_inquiries?select=*&order=created_at.desc&limit=20`, {
+                headers: { "apikey": curCfg.anonKey, "Authorization": `Bearer ${curAuth.access_token}` }
+              });
+              const rows = await res.json();
+              if (!Array.isArray(rows) || !rows.length) { showToast("No new website inquiries yet."); return; }
+              let added = 0;
+              rows.forEach(r => {
+                if (!state.leads.some(l => l.id === "web_" + r.id)) {
+                  state.leads.unshift({
+                    id: "web_" + r.id,
+                    name: `${r.business_name} (${r.ref_code})`,
+                    contact: r.business_name,
+                    phone: r.contact_phone || r.contact_email || "Website Brief",
+                    owner: "Aarav",
+                    source: "Website",
+                    stage: "New Lead",
+                    value: 34999,
+                    note: `${r.system_type} · ${r.timeline}`,
+                    timeline: [`Website brief submitted: ${(r.modules || []).join(", ")}`]
+                  });
+                  added++;
+                }
+              });
+              save(); closeModal(); state.tab = "pipeline"; render();
+              showToast(added ? `Imported ${added} website inquiry lead(s)!` : "All website leads already imported.");
+            } catch (err) {
+              showToast("Import failed: " + err.message);
+            }
+          });
+        }
+
+        const syncBtn = document.getElementById("forceSyncBtn");
+        if (syncBtn) {
+          syncBtn.addEventListener("click", async () => {
+            await pushWorkspaceToCloud();
+            showToast("Synced workspace to Postgres!");
+          });
+        }
+
+        const outBtn = document.getElementById("signOutBtn");
+        if (outBtn) {
+          outBtn.addEventListener("click", () => {
+            localStorage.removeItem(AUTH_KEY);
+            closeModal(); render(); showToast("Signed out — back to Demo Mode");
+          });
+        }
       });
 
       // Add Lead
@@ -1428,6 +1647,18 @@
           return;
         }
 
+        if (e.target.id === "exportLeadsBtn") {
+          const rows = [["Account", "Contact", "Phone", "Owner", "Source", "Stage", "Value"]];
+          state.leads.forEach(l => rows.push([l.name, l.contact, l.phone, l.owner, l.source, l.stage, l.value]));
+          downloadCSV("scalecraft-leads.csv", rows);
+          return;
+        }
+        if (e.target.id === "exportInvBtn") {
+          const rows = [["Invoice", "Client", "Base", "GST_18", "Total", "Status"]];
+          state.invoices.forEach(i => { const b = invBase(i); const g = Math.round(b * 0.18); rows.push([i.id, i.client, b, g, b + g, i.status]); });
+          downloadCSV("scalecraft-gst-invoices.csv", rows);
+          return;
+        }
         if (e.target.id === "newInvBtn") { openInvoiceModal(""); return; }
 
         const paid = e.target.closest("[data-mark-paid]");
@@ -1526,8 +1757,60 @@
         }
       });
 
-      function runAICommand(cmd) {
+      function downloadCSV(filename, rows) {
+        const csv = rows.map(r => r.map(c => `"${String(c ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        a.click();
+        showToast(`Exported ${filename}`);
+      }
+
+      async function runAICommand(cmd) {
         state.aiChat.push({ role: "user", text: cmd });
+        const cfg = getCloudCfg();
+        if (cfg.url && cfg.anonKey) {
+          try {
+            state.aiChat.push({ role: "ai", text: "Thinking via Gemini AI Operator..." });
+            render();
+            const res = await fetch(`${cfg.url}/functions/v1/crm-ai`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "apikey": cfg.anonKey,
+                "Authorization": `Bearer ${getAuth()?.access_token || cfg.anonKey}`
+              },
+              body: JSON.stringify({
+                command: cmd,
+                context: {
+                  industry: PRESETS[state.preset].label,
+                  leads: state.leads.map(l => ({ name: l.name, stage: l.stage, value: l.value })),
+                  invoices: state.invoices.map(i => ({ id: i.id, client: i.client, base: invBase(i), status: i.status, days: i.days }))
+                }
+              })
+            });
+            if (res.ok) {
+              const data = await res.json();
+              state.aiChat.pop();
+              state.aiChat.push({ role: "ai", text: `${data.reply}${data.model ? ` (${data.model})` : ""}` });
+              if (data.proposedAction && data.proposedAction.title) {
+                state.aiQueue.unshift({
+                  id: "q" + Date.now(),
+                  title: data.proposedAction.title,
+                  detail: data.proposedAction.detail || cmd,
+                  type: data.proposedAction.type || "followup"
+                });
+              }
+              save(); render();
+              return;
+            }
+            state.aiChat.pop();
+          } catch (_) {
+            if (state.aiChat[state.aiChat.length - 1]?.text?.startsWith("Thinking")) state.aiChat.pop();
+          }
+        }
+
         const lower = cmd.toLowerCase();
         let reply = "";
         if (lower.includes("overdue") || lower.includes("invoice") || lower.includes("reminder")) {

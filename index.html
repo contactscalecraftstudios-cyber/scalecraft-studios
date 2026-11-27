@@ -510,6 +510,39 @@
     </div>
   </section>
 
+  <!-- ROI & SaaS Savings Calculator -->
+  <section style="padding-bottom:10px;">
+    <div class="container">
+      <div class="card-box" style="background:linear-gradient(135deg,#060e22 0%,#102046 100%);color:#fff;border-color:rgba(255,255,255,0.12);">
+        <div class="est-grid" style="align-items:center;">
+          <div>
+            <span class="sec-kicker" style="color:#5eead4;">ROI Calculator</span>
+            <h2 style="font-size:28px;font-weight:800;margin-bottom:8px;">Stop Paying Rent on Your Own Business Data</h2>
+            <p style="font-size:14px;color:#cbd5e1;margin-bottom:18px;">Slide your team size to see how much you save every year by owning a custom ScaleCraft CRM instead of paying per-user SaaS fees.</p>
+            <div class="field">
+              <label for="roiUsers" style="color:#e2e8f0;">Team Size: <strong id="roiUsersVal">10 users</strong></label>
+              <input id="roiUsers" type="range" min="3" max="50" value="10" style="padding:0;accent-color:#14b8a6;" />
+            </div>
+            <div class="field" style="margin-bottom:0;">
+              <label for="roiSeat" style="color:#e2e8f0;">Typical SaaS CRM Fee / User / Month: <strong id="roiSeatVal">&#8377;2,000</strong></label>
+              <input id="roiSeat" type="range" min="1000" max="4500" step="500" value="2000" style="padding:0;accent-color:#2563eb;" />
+            </div>
+          </div>
+          <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#cbd5e1;"><span>Annual SaaS Rent (Zoho/HubSpot)</span><strong id="roiSaasYr" style="color:#fca5a5;">&#8377;2,40,000 / yr</strong></div>
+            <div style="display:flex;justify-content:space-between;font-size:13.5px;color:#cbd5e1;"><span>ScaleCraft One-Time Growth CRM</span><strong style="color:#5eead4;">&#8377;34,999 once</strong></div>
+            <hr style="border:none;border-top:1px solid rgba(255,255,255,0.12);" />
+            <div style="display:flex;justify-content:space-between;align-items:baseline;">
+              <span style="font-size:14px;font-weight:700;">Year-1 Net Savings</span>
+              <strong id="roiSave" style="font-size:28px;color:#2dd4bf;">&#8377;2,05,001</strong>
+            </div>
+            <a href="#order" class="btn btn-teal" style="width:100%;">Lock In Your Custom Build &rarr;</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Pricing -->
   <section id="pricing" class="white-bg">
     <div class="container">
@@ -541,6 +574,16 @@
           <div class="field">
             <label for="bName">Your Name / Business Name</label>
             <input id="bName" type="text" placeholder="e.g., Daksh Advisory / Jai Ganga Traders" />
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div class="field">
+              <label for="bPhone">WhatsApp / Phone</label>
+              <input id="bPhone" type="tel" placeholder="+91 98..." />
+            </div>
+            <div class="field">
+              <label for="bEmail">Email (Optional)</label>
+              <input id="bEmail" type="email" placeholder="you@company.com" />
+            </div>
           </div>
           <div class="field">
             <label for="bType">System Type</label>
@@ -581,9 +624,11 @@
           <h3 style="font-size:18px;font-weight:800;">Your Ready-to-Send Brief</h3>
           <p style="font-size:13px;color:var(--muted);">Send directly via WhatsApp or Email — we reply with a live prototype plan.</p>
           <div class="brief-box" id="briefOut"></div>
+          <div id="submitStatus" style="font-size:13px;margin-bottom:10px;display:none;padding:10px 12px;border-radius:10px;"></div>
           <div style="display:flex;flex-wrap:wrap;gap:10px;">
+            <button type="button" id="dbSubmitBtn" class="btn btn-primary">Submit Brief Online</button>
             <a id="waSendBtn" href="#" target="_blank" rel="noopener" class="btn btn-teal">Send on WhatsApp</a>
-            <a id="emailSendBtn" href="#" class="btn btn-primary">Send via Email</a>
+            <a id="emailSendBtn" href="#" class="btn btn-outline">Send via Email</a>
             <button type="button" id="copyBriefBtn" class="btn btn-outline">Copy Brief</button>
           </div>
         </div>
@@ -627,8 +672,16 @@
       const CONFIG = {
         whatsappNumber: "919509707043",
         email: "contact.scalecraft@gmail.com",
-        agencyName: "ScaleCraft Studios"
+        agencyName: "ScaleCraft Studios",
+        // Paste your Supabase Project URL & Anon Key below (or connect inside crm-demo.html -> Cloud Setup)
+        supabaseUrl: "",
+        supabaseAnonKey: ""
       };
+      try {
+        const savedCfg = JSON.parse(localStorage.getItem("scalecraft_supabase_cfg") || "{}");
+        if (!CONFIG.supabaseUrl && savedCfg.url) CONFIG.supabaseUrl = savedCfg.url;
+        if (!CONFIG.supabaseAnonKey && savedCfg.anonKey) CONFIG.supabaseAnonKey = savedCfg.anonKey;
+      } catch (_) {}
 
       const SERVICES = [
         {
@@ -861,8 +914,27 @@
       });
       renderPricing();
 
+      // ROI Calculator
+      const roiUsers = document.getElementById("roiUsers");
+      const roiSeat = document.getElementById("roiSeat");
+      function updateROI() {
+        const u = Number(roiUsers.value || 10);
+        const s = Number(roiSeat.value || 2000);
+        const saasYr = u * s * 12;
+        const saveYr = Math.max(0, saasYr - 34999);
+        document.getElementById("roiUsersVal").textContent = `${u} users`;
+        document.getElementById("roiSeatVal").textContent = `₹${s.toLocaleString("en-IN")}`;
+        document.getElementById("roiSaasYr").textContent = `₹${saasYr.toLocaleString("en-IN")} / yr`;
+        document.getElementById("roiSave").textContent = `₹${saveYr.toLocaleString("en-IN")}`;
+      }
+      roiUsers.addEventListener("input", updateROI);
+      roiSeat.addEventListener("input", updateROI);
+      updateROI();
+
       // Brief Builder
       const bName = document.getElementById("bName");
+      const bPhone = document.getElementById("bPhone");
+      const bEmail = document.getElementById("bEmail");
       const bType = document.getElementById("bType");
       const bTimeline = document.getElementById("bTimeline");
       const bNotes = document.getElementById("bNotes");
@@ -876,6 +948,8 @@
         const msg =
 `Hi ${CONFIG.agencyName}, I want to build a custom system:
 Name/Business: ${bName.value.trim() || "Not specified"}
+Phone: ${bPhone.value.trim() || "Not specified"}
+Email: ${bEmail.value.trim() || "Not specified"}
 System Type: ${bType.value}
 Timeline: ${bTimeline.value}
 Modules:
@@ -892,7 +966,55 @@ ${feats}${bNotes.value.trim() ? "\nNotes: " + bNotes.value.trim() : ""}`;
         pill.classList.toggle("on");
         updateBrief();
       });
-      [bName, bType, bTimeline, bNotes].forEach(el => el.addEventListener("input", updateBrief));
+      [bName, bPhone, bEmail, bType, bTimeline, bNotes].forEach(el => el.addEventListener("input", updateBrief));
+
+      document.getElementById("dbSubmitBtn").addEventListener("click", async () => {
+        const statusEl = document.getElementById("submitStatus");
+        const biz = bName.value.trim() || "Website Visitor";
+        const refCode = "SC-" + Math.floor(1000 + Math.random() * 9000);
+        const modules = Array.from(document.querySelectorAll("#featPills .pill-check.on")).map(el => el.dataset.feat);
+        statusEl.style.display = "block";
+
+        if (!CONFIG.supabaseUrl || !CONFIG.supabaseAnonKey) {
+          statusEl.style.background = "#fef3c7";
+          statusEl.style.color = "#92400e";
+          statusEl.innerHTML = `<strong>Brief Ready (${refCode}):</strong> Supabase backend URL/Key abhi add nahi hua hai — abhi <strong>Send on WhatsApp</strong> ya <strong>Send via Email</strong> par click karke bhej dein.`;
+          return;
+        }
+
+        try {
+          statusEl.style.background = "#eff6ff";
+          statusEl.style.color = "#1e40af";
+          statusEl.textContent = "Saving inquiry to ScaleCraft Cloud...";
+          const res = await fetch(`${CONFIG.supabaseUrl.replace(/\/$/, "")}/rest/v1/project_inquiries`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "apikey": CONFIG.supabaseAnonKey,
+              "Authorization": `Bearer ${CONFIG.supabaseAnonKey}`,
+              "Prefer": "return=minimal"
+            },
+            body: JSON.stringify({
+              ref_code: refCode,
+              business_name: biz,
+              system_type: bType.value,
+              timeline: bTimeline.value,
+              modules,
+              notes: bNotes.value.trim(),
+              contact_phone: bPhone.value.trim(),
+              contact_email: bEmail.value.trim()
+            })
+          });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          statusEl.style.background = "#dcfce7";
+          statusEl.style.color = "#166534";
+          statusEl.innerHTML = `<strong>Saved to Database!</strong> Reference ID: <strong>${refCode}</strong>. Aap chahein toh <strong>Send on WhatsApp</strong> bhi daba sakte hain.`;
+        } catch (err) {
+          statusEl.style.background = "#fee2e2";
+          statusEl.style.color = "#991b1b";
+          statusEl.innerHTML = `Cloud save error (${err.message}). Please click <strong>Send on WhatsApp</strong> or <strong>Send via Email</strong>.`;
+        }
+      });
       document.querySelectorAll("[data-prefill]").forEach(btn => {
         btn.addEventListener("click", () => {
           bNotes.value = `Interested in a build similar to ${btn.dataset.prefill}.`;
