@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ScaleCraft AI CRM — Interactive Live Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #071024;
+      --navy-2: #0f1b38;
+      --blue: #2563eb;
+      --blue-soft: #eff6ff;
+      --teal: #14b8a6;
+      --teal-soft: #f0fdfa;
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --green: #16a34a;
+      --amber: #d97706;
+      --red: #dc2626;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+    }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; border: none; background: none; }
+    a { color: inherit; text-decoration: none; }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background: var(--navy);
+      color: #cbd5e1;
+      display: flex;
+      flex-direction: column;
+      padding: 18px 14px;
+      flex-shrink: 0;
+      border-right: 1px solid rgba(255,255,255,0.08);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #fff;
+      font-weight: 800;
+      font-size: 16px;
+      padding: 4px 8px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 14px;
+    }
+    .brand-mark {
+      width: 32px; height: 32px; border-radius: 9px;
+      background: linear-gradient(135deg, var(--blue), var(--teal));
+      display: grid; place-items: center; font-size: 13px; color: #fff;
+    }
+    .brand small { display: block; font-size: 11px; color: #5eead4; font-weight: 600; }
+
+    .nav-group { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .nav-btn {
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; text-align: left;
+      padding: 10px 12px; border-radius: 10px;
+      color: #cbd5e1; font-size: 13.5px; font-weight: 600;
+      transition: all 0.15s ease;
+    }
+    .nav-btn:hover { background: rgba(255,255,255,0.06); color: #fff; }
+    .nav-btn.active { background: var(--blue); color: #fff; }
+    .nav-badge {
+      font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 999px;
+      background: rgba(255,255,255,0.14); color: #fff;
+    }
+
+    .side-foot {
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 14px;
+      display: flex; flex-direction: column; gap: 8px;
+      font-size: 12px;
+    }
+    .side-link {
+      display: block; padding: 9px 12px; border-radius: 9px;
+      background: rgba(255,255,255,0.06); color: #fff; text-align: center; font-weight: 600;
+    }
+    .side-link:hover { background: rgba(255,255,255,0.12); }
+
+    /* Main */
+    .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: 12px 22px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    }
+    .top-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .mob-toggle { display: none; font-size: 20px; padding: 4px 8px; border: 1px solid var(--border); border-radius: 8px; }
+    .page-title { font-size: 18px; font-weight: 800; }
+    .demo-pill {
+      font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: 999px;
+      background: var(--teal-soft); color: #0f766e; border: 1px solid rgba(20,184,166,0.3);
+    }
+    .top-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .ind-select {
+      padding: 8px 12px; border-radius: 9px; border: 1px solid var(--border);
+      background: #f8fafc; font-size: 13px; font-weight: 600; color: var(--text);
+    }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 8px 14px; border-radius: 9px; font-size: 13px; font-weight: 700;
+      transition: all 0.15s ease;
+    }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-teal { background: var(--teal); color: #042f2e; }
+    .btn-outline { background: #fff; border: 1px solid var(--border); color: var(--text); }
+    .btn-outline:hover { border-color: #94a3b8; }
+    .btn-danger { background: #fef2f2; color: var(--red); border: 1px solid #fecaca; }
+
+    .content { padding: 22px; flex: 1; display: flex; flex-direction: column; gap: 18px; }
+
+    /* Cards & Grids */
+    .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .kpi {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 16px 18px;
+    }
+    .kpi small { font-size: 12px; font-weight: 600; color: var(--muted); display: block; margin-bottom: 4px; }
+    .kpi b { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
+    .kpi .sub { font-size: 12px; color: var(--green); font-weight: 600; margin-top: 4px; }
+
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 18px;
+    }
+    .card-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+    .card-head h3 { font-size: 16px; font-weight: 800; }
+
+    .two-col { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 16px; }
+
+    /* AI Brief Banner */
+    .ai-banner {
+      background: linear-gradient(135deg, var(--navy) 0%, #12244c 100%);
+      color: #fff; border-radius: var(--radius); padding: 18px 20px;
+      display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+    }
+    .ai-tag {
+      display: inline-block; font-size: 11px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.06em; color: #5eead4; margin-bottom: 4px;
+    }
+
+    /* Kanban */
+    .kanban { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; align-items: start; }
+    .kb-col {
+      background: #e2e8f0; border-radius: var(--radius); padding: 12px;
+      min-height: 360px; display: flex; flex-direction: column; gap: 10px;
+    }
+    .kb-head { display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 800; padding: 2px 4px; }
+    .kb-card {
+      background: #fff; border: 1px solid var(--border); border-radius: 11px; padding: 12px;
+      display: flex; flex-direction: column; gap: 8px;
+      box-shadow: 0 2px 6px rgba(15,23,42,0.05);
+    }
+    .kb-card h4 { font-size: 14px; font-weight: 800; }
+    .kb-meta { font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; }
+    .kb-actions { display: flex; gap: 6px; flex-wrap: wrap; padding-top: 6px; border-top: 1px solid #f1f5f9; }
+    .mini-btn {
+      font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 6px;
+      background: #f1f5f9; color: #334155;
+    }
+    .mini-btn:hover { background: #e2e8f0; }
+
+    /* Inbox */
+    .inbox-wrap { display: grid; grid-template-columns: 300px 1fr; gap: 14px; min-height: 460px; }
+    .thread-list { display: flex; flex-direction: column; gap: 8px; }
+    .thread-item {
+      text-align: left; padding: 12px; border-radius: 11px; border: 1px solid var(--border); background: #fff;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .thread-item.active { border-color: var(--blue); background: var(--blue-soft); }
+    .chat-box { display: flex; flex-direction: column; justify-content: space-between; gap: 12px; }
+    .ai-summary {
+      background: var(--teal-soft); border: 1px solid rgba(20,184,166,0.3);
+      border-radius: 10px; padding: 10px 12px; font-size: 13px;
+    }
+    .msgs { display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; padding-right: 4px; }
+    .msg { padding: 9px 12px; border-radius: 10px; font-size: 13px; max-width: 82%; }
+    .msg.in { background: #f1f5f9; align-self: flex-start; }
+    .msg.out { background: var(--navy); color: #fff; align-self: flex-end; }
+    .chat-compose { display: flex; gap: 8px; }
+    .chat-compose input {
+      flex: 1; padding: 10px 12px; border: 1px solid var(--border); border-radius: 9px; font-size: 13.5px;
+    }
+
+    /* AI Operator */
+    .op-bar { display: flex; gap: 8px; margin-bottom: 12px; }
+    .op-bar input { flex: 1; padding: 11px 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 14px; }
+    .prompt-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .chip-btn {
+      font-size: 12px; font-weight: 600; padding: 6px 11px; border-radius: 999px;
+      background: #eff6ff; color: var(--blue); border: 1px solid #bfdbfe;
+    }
+    .chip-btn:hover { background: #dbeafe; }
+    .queue-item {
+      border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 10px;
+      display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+      background: #fffbeb; border-color: #fde68a;
+    }
+    .log-item {
+      border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; margin-bottom: 8px;
+      display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 13px;
+    }
+
+    /* Table */
+    table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    th, td { text-align: left; padding: 11px 12px; border-bottom: 1px solid var(--border); }
+    th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+
+    .badge {
+      display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px;
+    }
+    .b-green { background: #dcfce7; color: #166534; }
+    .b-amber { background: #fef3c7; color: #92400e; }
+    .b-red { background: #fee2e2; color: #991b1b; }
+    .b-blue { background: #dbeafe; color: #1e40af; }
+
+    /* Automation Switch */
+    .auto-row {
+      display: flex; justify-content: space-between; align-items: center; gap: 14px;
+      padding: 14px; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px;
+    }
+    .switch {
+      width: 44px; height: 24px; border-radius: 999px; background: #cbd5e1; position: relative; transition: 0.2s; flex-shrink: 0;
+    }
+    .switch::after {
+      content: ""; position: absolute; width: 18px; height: 18px; border-radius: 50%;
+      background: #fff; top: 3px; left: 3px; transition: 0.2s;
+    }
+    .switch.on { background: var(--teal); }
+    .switch.on::after { left: 23px; }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(2,6,23,0.68); display: none; place-items: center; padding: 18px; z-index: 100;
+    }
+    .modal-backdrop.open { display: grid; }
+    .modal {
+      background: #fff; border-radius: 16px; max-width: 520px; width: 100%; padding: 22px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.3);
+    }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 5px; }
+    .field input, .field select {
+      width: 100%; padding: 9px 11px; border: 1px solid #cbd5e1; border-radius: 9px; font-size: 13.5px;
+    }
+
+    @media (max-width: 980px) {
+      .sidebar {
+        position: fixed; left: -270px; top: 0; bottom: 0; z-index: 80; transition: left 0.2s ease;
+      }
+      .sidebar.open { left: 0; }
+      .mob-toggle { display: inline-block; }
+      .kpi-grid, .kanban { grid-template-columns: 1fr 1fr; }
+      .two-col, .inbox-wrap { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .kpi-grid, .kanban { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">SC</div>
+      <div>ScaleCraft CRM<small>AI Operator Inside</small></div>
+    </div>
+
+    <div class="nav-group" id="navGroup">
+      <button class="nav-btn active" data-tab="dashboard"><span>1. Owner Dashboard</span></button>
+      <button class="nav-btn" data-tab="pipeline"><span>2. Leads &amp; Pipeline</span><span class="nav-badge" id="leadCountBadge">0</span></button>
+      <button class="nav-btn" data-tab="inbox"><span>3. Unified Inbox</span><span class="nav-badge">WA</span></button>
+      <button class="nav-btn" data-tab="ai"><span>4. AI Operator</span><span class="nav-badge" id="queueBadge">0</span></button>
+      <button class="nav-btn" data-tab="billing"><span>5. GST Quotes &amp; Bills</span></button>
+      <button class="nav-btn" data-tab="automations"><span>6. Automations</span></button>
+    </div>
+
+    <div class="side-foot">
+      <button class="side-link" id="resetDemoBtn" type="button">Reset Sample Data</button>
+      <a class="side-link" href="index.html" style="background:rgba(20,184,166,0.18);color:#5eead4;">&larr; Back to Agency Site</a>
+    </div>
+  </aside>
+
+  <!-- Main Workspace -->
+  <div class="main">
+    <header class="topbar">
+      <div class="top-left">
+        <button class="mob-toggle" id="mobToggle" aria-label="Menu">&#9776;</button>
+        <div class="page-title" id="pageTitle">Owner Dashboard</div>
+        <span class="demo-pill">Interactive No-Login Demo</span>
+      </div>
+      <div class="top-right">
+        <select id="industrySelect" class="ind-select" aria-label="Switch Industry Preset">
+          <option value="distribution">Preset: FMCG &amp; Beverage Distribution</option>
+          <option value="agency">Preset: B2B Agency / IT Services</option>
+          <option value="restaurant">Preset: Restaurant / Hospitality (DineLoop)</option>
+        </select>
+        <button class="btn btn-primary" id="newLeadBtn" type="button">+ Add Lead</button>
+      </div>
+    </header>
+
+    <main class="content" id="mainContent"></main>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <h3 id="modalTitle" style="font-size:18px;font-weight:800;"></h3>
+        <button id="modalClose" style="font-size:22px;color:var(--muted);">&times;</button>
+      </div>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const STORAGE_KEY = "scalecraft_crm_demo_v1";
+      const STAGES = ["New Lead", "Qualified", "Quote Sent", "Won"];
+
+      const PRESETS = {
+        distribution: {
+          label: "FMCG & Beverage Distribution",
+          leads: [
+            { id: "l1", name: "Mahalaxmi Supermart", contact: "Ramesh Gupta", phone: "+91 98290 11223", source: "WhatsApp", stage: "Quote Sent", value: 48000, note: "200 crates cold drinks + mixer order" },
+            { id: "l2", name: "Annapurna Store", contact: "Suresh Jain", phone: "+91 98291 44556", source: "Referral", stage: "Qualified", value: 32500, note: "Weekly beverage supply contract" },
+            { id: "l3", name: "City Mart Retail", contact: "Anil Sharma", phone: "+91 97850 77889", source: "Instagram", stage: "New Lead", value: 25000, note: "Asked for distributor price list" },
+            { id: "l4", name: "Royal Caterers", contact: "Vikram Singh", phone: "+91 99280 33441", source: "WhatsApp", stage: "Won", value: 84000, note: "Wedding season bulk order confirmed" }
+          ],
+          invoices: [
+            { id: "INV-408", client: "Jai Ganga Retailers", amount: 42500, status: "Overdue", days: 9 },
+            { id: "INV-409", client: "Royal Caterers", amount: 84000, status: "Paid", days: 0 },
+            { id: "INV-410", client: "Mahalaxmi Supermart", amount: 48000, status: "Pending", days: 3 }
+          ],
+          threads: [
+            {
+              id: "t1", client: "Mahalaxmi Supermart", channel: "WhatsApp",
+              aiSummary: "Customer wants 200 crates delivered before Saturday and asked for 18% GST invoice.",
+              nextAction: "Send GST Quote #INV-410 & confirm dispatch slot.",
+              messages: [
+                { from: "in", text: "Bhaiya Saturday tak 200 crates cold drinks mil jayenge kya?" },
+                { from: "out", text: "Haan ji, stock ready hai. Aapko GST quote bhej raha hoon." },
+                { from: "in", text: "Theek hai rate thoda final karke PDF bhejo." }
+              ]
+            },
+            {
+              id: "t2", client: "Jai Ganga Retailers", channel: "WhatsApp",
+              aiSummary: "Invoice #INV-408 (₹42,500) is 9 days overdue. Promised UPI payment earlier.",
+              nextAction: "Trigger polite WhatsApp payment reminder with UPI link.",
+              messages: [
+                { from: "out", text: "Namaste, Invoice #INV-408 ka payment due hai." },
+                { from: "in", text: "Monday tak transfer kar dunga." }
+              ]
+            }
+          ]
+        },
+        agency: {
+          label: "B2B Agency / IT Services",
+          leads: [
+            { id: "l1", name: "Daksh Advisory Group", contact: "Daksh Mehta", phone: "+91 98111 22334", source: "Referral", stage: "Quote Sent", value: 65000, note: "Custom AI CRM + WhatsApp bot" },
+            { id: "l2", name: "BrightSmile Dental Chain", contact: "Dr. Priya Nair", phone: "+91 98450 99887", source: "Instagram", stage: "Qualified", value: 45000, note: "Patient follow-up & appointment CRM" },
+            { id: "l3", name: "Apex Logistics", contact: "Karan Patel", phone: "+91 97240 55112", source: "Website", stage: "New Lead", value: 90000, note: "Fleet dispatch tracking portal" },
+            { id: "l4", name: "Kothari Coaching", contact: "Nitin Kothari", phone: "+91 98280 66770", source: "WhatsApp", stage: "Won", value: 35000, note: "Student MCQ + AI doubt portal" }
+          ],
+          invoices: [
+            { id: "INV-201", client: "Daksh Advisory Group", amount: 32500, status: "Overdue", days: 8 },
+            { id: "INV-202", client: "Kothari Coaching", amount: 35000, status: "Paid", days: 0 },
+            { id: "INV-203", client: "BrightSmile Dental", amount: 45000, status: "Pending", days: 2 }
+          ],
+          threads: [
+            {
+              id: "t1", client: "Daksh Advisory Group", channel: "WhatsApp",
+              aiSummary: "Daksh asked for a working AI CRM demo with reversible AI actions and clean UI.",
+              nextAction: "Share live ScaleCraft CRM demo link & 14-day timeline.",
+              messages: [
+                { from: "in", text: "Bhai Zepfly jaisa CRM demo ready hua kya? Client ko dikhana hai." },
+                { from: "out", text: "Haan Daksh, live demo ready hai with AI Operator & GST billing." }
+              ]
+            },
+            {
+              id: "t2", client: "BrightSmile Dental Chain", channel: "Email",
+              aiSummary: "Looking for automatic WhatsApp appointment reminders for 3 clinics.",
+              nextAction: "Send Growth AI CRM package (₹34,999).",
+              messages: [
+                { from: "in", text: "Can your CRM send automatic reminders 1 day before checkups?" }
+              ]
+            }
+          ]
+        },
+        restaurant: {
+          label: "Restaurant / Hospitality (DineLoop)",
+          leads: [
+            { id: "l1", name: "Spice Route Bistro", contact: "Aman Kapoor", phone: "+91 98102 33445", source: "Instagram", stage: "Quote Sent", value: 28000, note: "QR table menu + loyalty CRM" },
+            { id: "l2", name: "Chai & Bytes Cafe", contact: "Rohan Verma", phone: "+91 98765 11220", source: "WhatsApp", stage: "New Lead", value: 18000, note: "Saw DineLoop UI reel" },
+            { id: "l3", name: "Saffron Banquet", contact: "Meera Joshi", phone: "+91 98290 88776", source: "Referral", stage: "Qualified", value: 52000, note: "Event booking + WhatsApp drip" },
+            { id: "l4", name: "Urban Tandoor", contact: "Harsh Malhotra", phone: "+91 99100 44332", source: "Website", stage: "Won", value: 34999, note: "Full DineLoop + CRM rollout" }
+          ],
+          invoices: [
+            { id: "INV-301", client: "Spice Route Bistro", amount: 28000, status: "Overdue", days: 11 },
+            { id: "INV-302", client: "Urban Tandoor", amount: 34999, status: "Paid", days: 0 }
+          ],
+          threads: [
+            {
+              id: "t1", client: "Spice Route Bistro", channel: "WhatsApp",
+              aiSummary: "Owner liked the upgraded DineLoop UI and wants weekend loyalty SMS/WhatsApp offers.",
+              nextAction: "Follow up on Quote #INV-301 for go-live this week.",
+              messages: [
+                { from: "in", text: "New UI bahut clean lag raha hai! Weekend offer auto-send kaise hoga?" },
+                { from: "out", text: "Built-in Automation tab se ek click mein schedule ho jata hai." }
+              ]
+            }
+          ]
+        }
+      };
+
+      const DEFAULT_AUTOMATIONS = [
+        { id: "a1", name: "10-Second WhatsApp Lead Auto-Reply", desc: "Sends a warm greeting + catalog link the moment a new lead arrives.", on: true, runs: 42 },
+        { id: "a2", name: "Auto-Pause on Customer Reply", desc: "Stops automated follow-ups immediately when the customer messages back.", on: true, runs: 19 },
+        { id: "a3", name: "7-Day Overdue Invoice Nudge", desc: "Queues an AI-drafted WhatsApp reminder with UPI link for approval.", on: true, runs: 8 },
+        { id: "a4", name: "9:00 AM Owner Daily Brief", desc: "Summarizes pending follow-ups, pipeline value, and collections.", on: false, runs: 14 }
+      ];
+
+      function buildState(presetKey) {
+        const p = PRESETS[presetKey] || PRESETS.distribution;
+        return {
+          preset: presetKey,
+          tab: "dashboard",
+          activeThreadId: p.threads[0]?.id || "",
+          leads: JSON.parse(JSON.stringify(p.leads)),
+          invoices: JSON.parse(JSON.stringify(p.invoices)),
+          threads: JSON.parse(JSON.stringify(p.threads)),
+          automations: JSON.parse(JSON.stringify(DEFAULT_AUTOMATIONS)),
+          aiQueue: [
+            {
+              id: "q1",
+              title: "Send WhatsApp Payment Reminder",
+              detail: `Invoice ${p.invoices[0]?.id} (${p.invoices[0]?.client}) is overdue by ${p.invoices[0]?.days} days (₹${(p.invoices[0]?.amount || 0).toLocaleString("en-IN")}).`,
+              type: "reminder",
+              targetId: p.invoices[0]?.id
+            }
+          ],
+          aiLogs: [
+            { id: "log1", text: "AI Operator summarized 2 unified inbox threads & extracted next actions.", time: "Today, 9:05 AM", reversible: false }
+          ]
+        };
+      }
+
+      let state;
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        state = saved ? JSON.parse(saved) : buildState("distribution");
+      } catch (_) {
+        state = buildState("distribution");
+      }
+
+      function save() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (_) {}
+      }
+
+      const TAB_TITLES = {
+        dashboard: "Owner Dashboard",
+        pipeline: "Leads & Pipeline",
+        inbox: "Unified Inbox (WhatsApp & Email)",
+        ai: "AI Operator (Permission-Checked)",
+        billing: "GST Quotes & Invoices",
+        automations: "Live Automations"
+      };
+
+      const mainEl = document.getElementById("mainContent");
+      const pageTitleEl = document.getElementById("pageTitle");
+      const indSelect = document.getElementById("industrySelect");
+      indSelect.value = state.preset;
+
+      function fmtINR(n) {
+        return "₹" + Number(n || 0).toLocaleString("en-IN");
+      }
+
+      function updateBadges() {
+        document.getElementById("leadCountBadge").textContent = state.leads.length;
+        document.getElementById("queueBadge").textContent = state.aiQueue.length;
+        document.querySelectorAll(".nav-btn").forEach(b => {
+          b.classList.toggle("active", b.dataset.tab === state.tab);
+        });
+        pageTitleEl.textContent = TAB_TITLES[state.tab] || "ScaleCraft CRM";
+      }
+
+      function render() {
+        updateBadges();
+        if (state.tab === "dashboard") renderDashboard();
+        else if (state.tab === "pipeline") renderPipeline();
+        else if (state.tab === "inbox") renderInbox();
+        else if (state.tab === "ai") renderAI();
+        else if (state.tab === "billing") renderBilling();
+        else if (state.tab === "automations") renderAutomations();
+      }
+
+      function renderDashboard() {
+        const totalPipe = state.leads.reduce((s, l) => s + Number(l.value || 0), 0);
+        const wonVal = state.leads.filter(l => l.stage === "Won").reduce((s, l) => s + Number(l.value || 0), 0);
+        const overdue = state.invoices.filter(i => i.status === "Overdue");
+        const overdueSum = overdue.reduce((s, i) => s + Number(i.amount || 0), 0);
+
+        mainEl.innerHTML = `
+          <div class="ai-banner">
+            <div>
+              <span class="ai-tag">AI Morning Owner Brief · ${PRESETS[state.preset].label}</span>
+              <h2 style="font-size:19px;font-weight:800;margin-bottom:4px;">${state.leads.length} Active Deals · ${overdue.length} Overdue Invoice Need Attention</h2>
+              <p style="font-size:13.5px;color:#cbd5e1;">AI Operator has ${state.aiQueue.length} pending action(s) waiting for your 1-click approval.</p>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="btn btn-teal" data-go="ai">Open AI Operator (${state.aiQueue.length})</button>
+              <button class="btn btn-outline" style="background:rgba(255,255,255,0.08);color:#fff;border-color:rgba(255,255,255,0.2);" data-go="billing">Create GST Invoice</button>
+            </div>
+          </div>
+
+          <div class="kpi-grid">
+            <div class="kpi"><small>Total Pipeline</small><b>${fmtINR(totalPipe)}</b><div class="sub">${state.leads.length} active deals</div></div>
+            <div class="kpi"><small>Closed Won</small><b>${fmtINR(wonVal)}</b><div class="sub">Zero per-seat fee</div></div>
+            <div class="kpi"><small>Overdue Collections</small><b style="color:var(--red);">${fmtINR(overdueSum)}</b><div class="sub" style="color:var(--amber);">${overdue.length} invoice(s) overdue</div></div>
+            <div class="kpi"><small>AI Actions Logged</small><b>${state.aiLogs.length}</b><div class="sub">100% reversible log</div></div>
+          </div>
+
+          <div class="two-col">
+            <div class="card">
+              <div class="card-head">
+                <h3>Hot Deals in Pipeline</h3>
+                <button class="btn btn-outline" data-go="pipeline">Open Kanban &rarr;</button>
+              </div>
+              <table>
+                <thead><tr><th>Business</th><th>Stage</th><th>Value</th></tr></thead>
+                <tbody>
+                  ${state.leads.map(l => `
+                    <tr>
+                      <td><strong>${l.name}</strong><br><small style="color:var(--muted);">${l.contact} · ${l.source}</small></td>
+                      <td><span class="badge ${l.stage === "Won" ? "b-green" : l.stage === "Quote Sent" ? "b-amber" : "b-blue"}">${l.stage}</span></td>
+                      <td><strong>${fmtINR(l.value)}</strong></td>
+                    </tr>
+                  `).join("")}
+                </tbody>
+              </table>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <h3>Recent AI &amp; Automation Activity</h3>
+                <button class="btn btn-outline" data-go="automations">Rules</button>
+              </div>
+              ${state.aiLogs.slice(0, 5).map(log => `
+                <div class="log-item">
+                  <div><strong>${log.text}</strong><div style="font-size:11.5px;color:var(--muted);">${log.time}</div></div>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        `;
+      }
+
+      function renderPipeline() {
+        mainEl.innerHTML = `
+          <div class="card-head" style="margin-bottom:0;">
+            <p style="font-size:13.5px;color:var(--muted);">Move any deal forward in 1 click or jump straight to WhatsApp Inbox.</p>
+          </div>
+          <div class="kanban">
+            ${STAGES.map(stage => {
+              const items = state.leads.filter(l => l.stage === stage);
+              return `
+                <div class="kb-col">
+                  <div class="kb-head"><span>${stage}</span><span>${items.length}</span></div>
+                  ${items.map(l => `
+                    <div class="kb-card">
+                      <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <span class="badge b-blue">${l.source}</span>
+                        <strong style="font-size:13px;">${fmtINR(l.value)}</strong>
+                      </div>
+                      <h4>${l.name}</h4>
+                      <div class="kb-meta"><span>${l.contact}</span><span>${l.phone}</span></div>
+                      <p style="font-size:12px;color:var(--muted);">${l.note}</p>
+                      <div class="kb-actions">
+                        ${STAGES.indexOf(stage) > 0 ? `<button class="mini-btn" data-move="${l.id}" data-dir="-1">&larr; Back</button>` : ""}
+                        ${STAGES.indexOf(stage) < STAGES.length - 1 ? `<button class="mini-btn" style="background:#dbeafe;color:#1e40af;" data-move="${l.id}" data-dir="1">Move Next &rarr;</button>` : ""}
+                        <button class="mini-btn" data-del-lead="${l.id}" style="color:var(--red);margin-left:auto;">Delete</button>
+                      </div>
+                    </div>
+                  `).join("") || `<div style="font-size:12.5px;color:var(--muted);padding:12px;text-align:center;">No deals in ${stage}</div>`}
+                </div>
+              `;
+            }).join("")}
+          </div>
+        `;
+      }
+
+      function renderInbox() {
+        const active = state.threads.find(t => t.id === state.activeThreadId) || state.threads[0];
+        mainEl.innerHTML = `
+          <div class="inbox-wrap">
+            <div class="thread-list">
+              ${state.threads.map(t => `
+                <button class="thread-item ${active && t.id === active.id ? "active" : ""}" data-thread="${t.id}">
+                  <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <strong style="font-size:14px;">${t.client}</strong>
+                    <span class="badge b-green">${t.channel}</span>
+                  </div>
+                  <span style="font-size:12px;color:var(--muted);">${t.messages[t.messages.length - 1]?.text || ""}</span>
+                </button>
+              `).join("")}
+            </div>
+
+            <div class="card chat-box">
+              ${active ? `
+                <div>
+                  <div class="card-head">
+                    <h3>${active.client} <span class="badge b-green">${active.channel}</span></h3>
+                    <button class="btn btn-teal" id="aiDraftReplyBtn" type="button">AI Draft Reply</button>
+                  </div>
+                  <div class="ai-summary">
+                    <strong>AI Summary:</strong> ${active.aiSummary}<br>
+                    <strong>Suggested Next Action:</strong> ${active.nextAction}
+                  </div>
+                </div>
+                <div class="msgs" id="msgScroll">
+                  ${active.messages.map(m => `<div class="msg ${m.from}">${m.text}</div>`).join("")}
+                </div>
+                <form class="chat-compose" id="chatForm">
+                  <input id="chatInput" type="text" placeholder="Type WhatsApp/Email reply or click AI Draft Reply..." required />
+                  <button class="btn btn-primary" type="submit">Send</button>
+                </form>
+              ` : `<p>No conversations yet.</p>`}
+            </div>
+          </div>
+        `;
+      }
+
+      function renderAI() {
+        mainEl.innerHTML = `
+          <div class="card">
+            <div class="card-head">
+              <h3>Ask AI Operator (Natural Language Commands)</h3>
+              <span class="demo-pill">Permission-Checked &amp; Reversible</span>
+            </div>
+            <form class="op-bar" id="aiCmdForm">
+              <input id="aiCmdInput" type="text" placeholder="e.g., Show overdue invoices, Draft payment reminders, or Summarize pipeline..." />
+              <button class="btn btn-primary" type="submit">Run Command</button>
+            </form>
+            <div class="prompt-chips">
+              <button type="button" class="chip-btn" data-ai-cmd="Show overdue invoices & queue reminders">Show overdue invoices &amp; queue reminders</button>
+              <button type="button" class="chip-btn" data-ai-cmd="Summarize hot deals in Quote Sent">Summarize hot deals in Quote Sent</button>
+              <button type="button" class="chip-btn" data-ai-cmd="Prepare WhatsApp follow-up for New Leads">Prepare WhatsApp follow-up for New Leads</button>
+            </div>
+            <div id="aiCmdReply" style="font-size:13.5px;background:#f8fafc;border:1px solid var(--border);padding:12px 14px;border-radius:10px;color:#334155;">
+              AI Operator ready. Click a command chip above or type your own instruction.
+            </div>
+          </div>
+
+          <div class="two-col">
+            <div class="card">
+              <div class="card-head"><h3>Approval Queue (${state.aiQueue.length})</h3></div>
+              ${state.aiQueue.length ? state.aiQueue.map(q => `
+                <div class="queue-item">
+                  <div>
+                    <strong style="font-size:14px;">${q.title}</strong>
+                    <div style="font-size:12.5px;color:#78350f;">${q.detail}</div>
+                  </div>
+                  <div style="display:flex;gap:6px;">
+                    <button class="btn btn-teal" data-approve="${q.id}">Approve &amp; Send</button>
+                    <button class="btn btn-danger" data-reject="${q.id}">Reject</button>
+                  </div>
+                </div>
+              `).join("") : `<p style="font-size:13.5px;color:var(--muted);">No pending AI actions. Run a command above to queue an action.</p>`}
+            </div>
+
+            <div class="card">
+              <div class="card-head"><h3>Executed Action Log (1-Click Undo)</h3></div>
+              ${state.aiLogs.map(log => `
+                <div class="log-item">
+                  <div>
+                    <div><strong>${log.text}</strong></div>
+                    <small style="color:var(--muted);">${log.time}</small>
+                  </div>
+                  ${log.reversible ? `<button class="mini-btn" data-undo="${log.id}" style="background:#fee2e2;color:#991b1b;">Undo</button>` : ""}
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        `;
+      }
+
+      function renderBilling() {
+        mainEl.innerHTML = `
+          <div class="card">
+            <div class="card-head">
+              <h3>GST Quotes &amp; Invoices (18% GST Ready)</h3>
+              <button class="btn btn-primary" id="newInvBtn" type="button">+ Create GST Invoice</button>
+            </div>
+            <table>
+              <thead>
+                <tr><th>Invoice #</th><th>Client</th><th>Base Amt</th><th>18% GST</th><th>Total</th><th>Status</th><th>Actions</th></tr>
+              </thead>
+              <tbody>
+                ${state.invoices.map(inv => {
+                  const gst = Math.round(inv.amount * 0.18);
+                  const total = inv.amount + gst;
+                  const cls = inv.status === "Paid" ? "b-green" : inv.status === "Overdue" ? "b-red" : "b-amber";
+                  return `
+                    <tr>
+                      <td><strong>${inv.id}</strong></td>
+                      <td>${inv.client}</td>
+                      <td>${fmtINR(inv.amount)}</td>
+                      <td>${fmtINR(gst)}</td>
+                      <td><strong>${fmtINR(total)}</strong></td>
+                      <td><span class="badge ${cls}">${inv.status}${inv.days ? ` (${inv.days}d)` : ""}</span></td>
+                      <td style="display:flex;gap:6px;flex-wrap:wrap;">
+                        ${inv.status !== "Paid" ? `<button class="mini-btn" style="background:#dcfce7;color:#166534;" data-mark-paid="${inv.id}">Mark Paid</button>` : ""}
+                        <button class="mini-btn" data-print-inv="${inv.id}">Print / PDF</button>
+                      </td>
+                    </tr>
+                  `;
+                }).join("")}
+              </tbody>
+            </table>
+          </div>
+        `;
+      }
+
+      function renderAutomations() {
+        mainEl.innerHTML = `
+          <div class="card">
+            <div class="card-head">
+              <h3>Automated WhatsApp &amp; Follow-up Rules</h3>
+              <span class="demo-pill">Runs 24/7 Without Manual Typing</span>
+            </div>
+            ${state.automations.map(a => `
+              <div class="auto-row">
+                <div>
+                  <strong style="font-size:14.5px;">${a.name}</strong>
+                  <div style="font-size:12.5px;color:var(--muted);">${a.desc} · <strong>${a.runs} runs</strong></div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <button class="btn btn-outline" data-test-auto="${a.id}" type="button">Test Run</button>
+                  <button class="switch ${a.on ? "on" : ""}" data-toggle-auto="${a.id}" aria-label="Toggle ${a.name}"></button>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+        `;
+      }
+
+      // Modal Helpers
+      const backdrop = document.getElementById("modalBackdrop");
+      const modalTitle = document.getElementById("modalTitle");
+      const modalBody = document.getElementById("modalBody");
+      function openModal(title, html) {
+        modalTitle.textContent = title;
+        modalBody.innerHTML = html;
+        backdrop.classList.add("open");
+      }
+      function closeModal() { backdrop.classList.remove("open"); }
+      document.getElementById("modalClose").addEventListener("click", closeModal);
+      backdrop.addEventListener("click", (e) => { if (e.target === backdrop) closeModal(); });
+
+      // Sidebar Navigation
+      document.getElementById("navGroup").addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-tab]");
+        if (!btn) return;
+        state.tab = btn.dataset.tab;
+        document.getElementById("sidebar").classList.remove("open");
+        save();
+        render();
+      });
+      document.getElementById("mobToggle").addEventListener("click", () => {
+        document.getElementById("sidebar").classList.toggle("open");
+      });
+
+      // Industry Switcher
+      indSelect.addEventListener("change", () => {
+        state = buildState(indSelect.value);
+        save();
+        render();
+      });
+
+      document.getElementById("resetDemoBtn").addEventListener("click", () => {
+        state = buildState(indSelect.value);
+        save();
+        render();
+      });
+
+      // Add Lead Modal
+      document.getElementById("newLeadBtn").addEventListener("click", () => {
+        openModal("Add New Lead to Pipeline", `
+          <form id="leadForm">
+            <div class="field"><label>Business / Client Name</label><input id="nlName" required placeholder="e.g., Sharma Traders" /></div>
+            <div class="field"><label>Contact Person</label><input id="nlContact" required placeholder="e.g., Amit Sharma" /></div>
+            <div class="field"><label>Phone / WhatsApp</label><input id="nlPhone" required value="+91 98" /></div>
+            <div class="field"><label>Deal Value (₹)</label><input id="nlValue" type="number" required value="35000" /></div>
+            <div class="field"><label>Source</label>
+              <select id="nlSource"><option>WhatsApp</option><option>Instagram</option><option>Referral</option><option>Website</option></select>
+            </div>
+            <button class="btn btn-primary" type="submit" style="width:100%;">Save Lead &amp; Trigger Welcome Rule</button>
+          </form>
+        `);
+        document.getElementById("leadForm").addEventListener("submit", (ev) => {
+          ev.preventDefault();
+          const name = document.getElementById("nlName").value.trim();
+          state.leads.unshift({
+            id: "l" + Date.now(),
+            name,
+            contact: document.getElementById("nlContact").value.trim(),
+            phone: document.getElementById("nlPhone").value.trim(),
+            value: Number(document.getElementById("nlValue").value || 0),
+            source: document.getElementById("nlSource").value,
+            stage: "New Lead",
+            note: "Added via ScaleCraft CRM"
+          });
+          state.aiLogs.unshift({
+            id: "log" + Date.now(),
+            text: `New lead "${name}" captured & 10-sec WhatsApp greeting queued.`,
+            time: "Just now",
+            reversible: false
+          });
+          state.tab = "pipeline";
+          save();
+          closeModal();
+          render();
+        });
+      });
+
+      // Delegated Event Handlers inside mainContent
+      mainEl.addEventListener("click", (e) => {
+        const go = e.target.closest("[data-go]");
+        if (go) {
+          state.tab = go.dataset.go;
+          save();
+          render();
+          return;
+        }
+
+        const move = e.target.closest("[data-move]");
+        if (move) {
+          const lead = state.leads.find(l => l.id === move.dataset.move);
+          if (lead) {
+            const idx = STAGES.indexOf(lead.stage) + Number(move.dataset.dir);
+            if (idx >= 0 && idx < STAGES.length) {
+              lead.stage = STAGES[idx];
+              save();
+              render();
+            }
+          }
+          return;
+        }
+
+        const delLead = e.target.closest("[data-del-lead]");
+        if (delLead) {
+          state.leads = state.leads.filter(l => l.id !== delLead.dataset.delLead);
+          save();
+          render();
+          return;
+        }
+
+        const th = e.target.closest("[data-thread]");
+        if (th) {
+          state.activeThreadId = th.dataset.thread;
+          save();
+          render();
+          return;
+        }
+
+        if (e.target.id === "aiDraftReplyBtn") {
+          const active = state.threads.find(t => t.id === state.activeThreadId);
+          const input = document.getElementById("chatInput");
+          if (active && input) {
+            input.value = `Namaste ${active.client} ji, ${active.nextAction} Bataiye aaj kis time call/WhatsApp pe confirm karein?`;
+            input.focus();
+          }
+          return;
+        }
+
+        const chip = e.target.closest("[data-ai-cmd]");
+        if (chip) {
+          runAICommand(chip.dataset.aiCmd);
+          return;
+        }
+
+        const app = e.target.closest("[data-approve]");
+        if (app) {
+          const q = state.aiQueue.find(x => x.id === app.dataset.approve);
+          if (q) {
+            state.aiQueue = state.aiQueue.filter(x => x.id !== q.id);
+            state.aiLogs.unshift({
+              id: "log" + Date.now(),
+              text: `Executed: ${q.title} — ${q.detail}`,
+              time: "Just now",
+              reversible: true,
+              undoPayload: q
+            });
+            save();
+            render();
+          }
+          return;
+        }
+
+        const rej = e.target.closest("[data-reject]");
+        if (rej) {
+          state.aiQueue = state.aiQueue.filter(x => x.id !== rej.dataset.reject);
+          save();
+          render();
+          return;
+        }
+
+        const undo = e.target.closest("[data-undo]");
+        if (undo) {
+          const log = state.aiLogs.find(l => l.id === undo.dataset.undo);
+          if (log && log.undoPayload) {
+            state.aiQueue.unshift(log.undoPayload);
+            state.aiLogs = state.aiLogs.filter(l => l.id !== log.id);
+            save();
+            render();
+          }
+          return;
+        }
+
+        if (e.target.id === "newInvBtn") {
+          openModal("Create 18% GST Invoice", `
+            <form id="invForm">
+              <div class="field"><label>Client Name</label><input id="ivClient" required placeholder="e.g., Jai Ganga Retailers" /></div>
+              <div class="field"><label>Base Amount (₹ before GST)</label><input id="ivAmt" type="number" required value="25000" /></div>
+              <div class="field"><label>Status</label><select id="ivStatus"><option>Pending</option><option>Paid</option><option>Overdue</option></select></div>
+              <button class="btn btn-primary" type="submit" style="width:100%;">Generate GST Invoice</button>
+            </form>
+          `);
+          document.getElementById("invForm").addEventListener("submit", (ev) => {
+            ev.preventDefault();
+            const num = Math.floor(411 + Math.random() * 500);
+            state.invoices.unshift({
+              id: `INV-${num}`,
+              client: document.getElementById("ivClient").value.trim(),
+              amount: Number(document.getElementById("ivAmt").value || 0),
+              status: document.getElementById("ivStatus").value,
+              days: document.getElementById("ivStatus").value === "Overdue" ? 7 : 0
+            });
+            save();
+            closeModal();
+            render();
+          });
+          return;
+        }
+
+        const paid = e.target.closest("[data-mark-paid]");
+        if (paid) {
+          const inv = state.invoices.find(i => i.id === paid.dataset.markPaid);
+          if (inv) { inv.status = "Paid"; inv.days = 0; save(); render(); }
+          return;
+        }
+
+        const printBtn = e.target.closest("[data-print-inv]");
+        if (printBtn) {
+          const inv = state.invoices.find(i => i.id === printBtn.dataset.printInv);
+          if (inv) {
+            const gst = Math.round(inv.amount * 0.18);
+            openModal(`Tax Invoice ${inv.id}`, `
+              <div style="border:1px solid var(--border);border-radius:12px;padding:16px;font-size:13.5px;display:flex;flex-direction:column;gap:8px;">
+                <div style="display:flex;justify-content:space-between;"><strong>ScaleCraft Demo Billing</strong><span>${inv.id}</span></div>
+                <div><strong>Billed To:</strong> ${inv.client}</div>
+                <hr style="border:none;border-top:1px solid var(--border);">
+                <div style="display:flex;justify-content:space-between;"><span>Subtotal</span><span>${fmtINR(inv.amount)}</span></div>
+                <div style="display:flex;justify-content:space-between;"><span>GST (18%)</span><span>${fmtINR(gst)}</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:16px;"><strong>Grand Total</strong><strong>${fmtINR(inv.amount + gst)}</strong></div>
+                <div style="margin-top:8px;"><span class="badge ${inv.status === "Paid" ? "b-green" : "b-amber"}">Status: ${inv.status}</span></div>
+              </div>
+              <button class="btn btn-primary" style="width:100%;margin-top:12px;" onclick="window.print()">Print / Save as PDF</button>
+            `);
+          }
+          return;
+        }
+
+        const tog = e.target.closest("[data-toggle-auto]");
+        if (tog) {
+          const a = state.automations.find(x => x.id === tog.dataset.toggleAuto);
+          if (a) { a.on = !a.on; save(); render(); }
+          return;
+        }
+
+        const testAuto = e.target.closest("[data-test-auto]");
+        if (testAuto) {
+          const a = state.automations.find(x => x.id === testAuto.dataset.testAuto);
+          if (a) {
+            a.runs += 1;
+            state.aiLogs.unshift({ id: "log" + Date.now(), text: `Automation test fired: "${a.name}"`, time: "Just now", reversible: false });
+            save();
+            render();
+          }
+        }
+      });
+
+      mainEl.addEventListener("submit", (e) => {
+        if (e.target.id === "chatForm") {
+          e.preventDefault();
+          const input = document.getElementById("chatInput");
+          const active = state.threads.find(t => t.id === state.activeThreadId);
+          if (active && input && input.value.trim()) {
+            active.messages.push({ from: "out", text: input.value.trim() });
+            save();
+            render();
+          }
+        }
+        if (e.target.id === "aiCmdForm") {
+          e.preventDefault();
+          const input = document.getElementById("aiCmdInput");
+          if (input && input.value.trim()) runAICommand(input.value.trim());
+        }
+      });
+
+      function runAICommand(cmd) {
+        const lower = cmd.toLowerCase();
+        let reply = "";
+        if (lower.includes("overdue") || lower.includes("invoice") || lower.includes("reminder")) {
+          const overdue = state.invoices.filter(i => i.status === "Overdue");
+          if (overdue.length) {
+            overdue.forEach(inv => {
+              if (!state.aiQueue.some(q => q.targetId === inv.id)) {
+                state.aiQueue.unshift({
+                  id: "q" + Date.now() + Math.random().toString(16).slice(2, 6),
+                  title: `Send WhatsApp Payment Reminder (${inv.id})`,
+                  detail: `${inv.client} — ${fmtINR(inv.amount)} overdue by ${inv.days} days.`,
+                  type: "reminder",
+                  targetId: inv.id
+                });
+              }
+            });
+            reply = `Found ${overdue.length} overdue invoice(s). Queued WhatsApp payment reminder(s) for your 1-click approval below.`;
+          } else {
+            reply = "Great news — zero overdue invoices right now!";
+          }
+        } else if (lower.includes("quote") || lower.includes("hot") || lower.includes("pipeline")) {
+          const qs = state.leads.filter(l => l.stage === "Quote Sent");
+          const val = qs.reduce((s, l) => s + l.value, 0);
+          reply = `You have ${qs.length} hot deal(s) in Quote Sent worth ${fmtINR(val)}: ${qs.map(l => l.name).join(", ") || "None"}.`;
+        } else {
+          const newLeads = state.leads.filter(l => l.stage === "New Lead");
+          state.aiQueue.unshift({
+            id: "q" + Date.now(),
+            title: `Follow up ${newLeads.length || 1} New Lead(s) on WhatsApp`,
+            detail: newLeads.length ? `Targets: ${newLeads.map(l => l.name).join(", ")}` : "Check active leads and send intro message.",
+            type: "followup"
+          });
+          reply = `Prepared a permission-checked WhatsApp follow-up action for "${cmd}" in the Approval Queue below.`;
+        }
+        save();
+        render();
+        const box = document.getElementById("aiCmdReply");
+        if (box) box.innerHTML = `<strong>AI Operator:</strong> ${reply}`;
+      }
+
+      render();
+    })();
+  </script>
+</body>
+</html>
