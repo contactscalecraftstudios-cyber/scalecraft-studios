@@ -503,13 +503,15 @@
       const AUTH_KEY = "scalecraft_supabase_auth";
       const STAGES = ["New Lead", "Qualified", "Quote Sent", "Won"];
 
-      // Paste your Supabase URL & Anon Key here once (or set inside Connect Cloud Backend modal)
-      const DEFAULT_CLOUD = { url: "", anonKey: "" };
+      const DEFAULT_CLOUD = {
+        url: "https://tnwsumwskrlhniynprbi.supabase.co",
+        anonKey: "sb_publishable_b95tUFkFiF9BiNhJStGrfQ_Zq9KfwsY"
+      };
       function getCloudCfg() {
         try {
           const s = JSON.parse(localStorage.getItem(CFG_KEY) || "{}");
           return {
-            url: (DEFAULT_CLOUD.url || s.url || "").replace(/\/$/, ""),
+            url: (DEFAULT_CLOUD.url || s.url || "").replace(/\/rest\/v1\/?$/, "").replace(/\/$/, ""),
             anonKey: DEFAULT_CLOUD.anonKey || s.anonKey || ""
           };
         } catch (_) { return { ...DEFAULT_CLOUD }; }
