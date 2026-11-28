@@ -473,6 +473,7 @@
           <option value="franchise">Industry: Franchise Network</option>
         </select>
         <button class="btn btn-outline" id="mobilePreviewBtn" type="button" title="Preview Field Staff Mobile View">Mobile View</button>
+        <button class="btn btn-teal" id="voiceNoteBtn" type="button" title="Dictate or parse a voice note into CRM">Voice-to-CRM</button>
         <button class="btn btn-primary" id="newLeadBtn" type="button">+ Add Lead</button>
       </div>
     </header>
@@ -1228,6 +1229,7 @@
                       <td><span class="badge ${cls}">${inv.status}${inv.days ? ` (${inv.days}d)` : ""}</span></td>
                       <td style="display:flex;gap:6px;flex-wrap:wrap;">
                         ${inv.status !== "Paid" ? `<button class="mini-btn" style="background:#dcfce7;color:#166534;" data-mark-paid="${inv.id}">Mark Paid</button>` : ""}
+                        <button class="mini-btn" style="background:#eff6ff;color:#1d4ed8;" data-client-portal="${inv.id}">Client Portal</button>
                         <button class="mini-btn" data-print-inv="${inv.id}">Tax PDF</button>
                       </td>
                     </tr>
@@ -1299,6 +1301,35 @@
                 </div>
               </div>
             `).join("")}
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <h3>WhatsApp Bulk Campaign Builder</h3>
+              <span class="demo-pill">Zero-Spam Approval Queue</span>
+            </div>
+            <form id="waCampaignForm" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div class="field" style="margin-bottom:0;">
+                <label>Target Segment</label>
+                <select id="campSeg">
+                  <option value="overdue">Overdue Invoices (${state.invoices.filter(i=>i.status==="Overdue").length})</option>
+                  <option value="quotesent">Quote Sent Hot Leads (${state.leads.filter(l=>l.stage==="Quote Sent").length})</option>
+                  <option value="all">All Active Leads (${state.leads.length})</option>
+                </select>
+              </div>
+              <div class="field" style="margin-bottom:0;">
+                <label>Template</label>
+                <select id="campTpl">
+                  <option value="Polite UPI Payment Reminder">Polite UPI Payment Reminder</option>
+                  <option value="14-Day Fast Launch / Festival Offer">14-Day Fast Launch / Festival Offer</option>
+                  <option value="Quote Follow-up + Client Portal Link">Quote Follow-up + Client Portal Link</option>
+                </select>
+              </div>
+              <div style="grid-column:1 / -1;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+                <small style="color:var(--muted);">Personalized messages are staged in AI Operator Approval Queue before sending.</small>
+                <button class="btn btn-teal" type="submit">Queue WhatsApp Campaign &rarr;</button>
+              </div>
+            </form>
           </div>
         `;
       }
@@ -1718,6 +1749,12 @@
           return;
         }
 
+        const portalBtn = e.target.closest("[data-client-portal]");
+        if (portalBtn) {
+          openClientPortal(portalBtn.dataset.clientPortal);
+          return;
+        }
+
         const tog = e.target.closest("[data-toggle-auto]");
         if (tog) {
           const a = state.automations.find(x => x.id === tog.dataset.toggleAuto);
@@ -1734,6 +1771,121 @@
             save(); render(); showToast(`Test run completed: ${a.name}`);
           }
         }
+      });
+
+      function openClientPortal(invId) {
+        const inv = state.invoices.find(i => i.id === invId) || state.invoices[0];
+        if (!inv) { showToast("No invoice found"); return; }
+        const base = invBase(inv);
+        const gst = Math.round(base * 0.18);
+        const total = base + gst;
+        const paid = inv.status === "Paid";
+        openModal(`Customer Portal · ${inv.client}`, `
+          <div style="background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <strong style="font-size:15px;">Order &amp; Quote ${inv.id}</strong>
+              <span class="badge ${paid ? "b-green" : "b-amber"}">${paid ? "Paid & Confirmed" : "Awaiting Approval / UPI"}</span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;text-align:center;font-size:11.5px;font-weight:700;">
+              <div style="padding:7px;border-radius:8px;background:#dcfce7;color:#166534;">1. Quote Sent ✓</div>
+              <div style="padding:7px;border-radius:8px;background:${paid ? "#dcfce7" : "#dbeafe"};color:${paid ? "#166534" : "#1e40af"};">2. Approved ${paid ? "✓" : "..."}</div>
+              <div style="padding:7px;border-radius:8px;background:${paid ? "#dcfce7" : "#f1f5f9"};color:${paid ? "#166534" : "#64748b"};">3. UPI Paid ${paid ? "✓" : ""}</div>
+            </div>
+            <div style="font-size:13px;">
+              ${inv.items.map(it => `<div style="display:flex;justify-content:space-between;"><span>${it.desc} &times; ${it.qty}</span><strong>${fmtINR(it.qty * it.rate)}</strong></div>`).join("")}
+              <div style="display:flex;justify-content:space-between;color:var(--muted);"><span>18% GST</span><span>${fmtINR(gst)}</span></div>
+              <hr style="border:none;border-top:1px solid var(--border);margin:6px 0;" />
+              <div style="display:flex;justify-content:space-between;font-size:16px;"><strong>Payable Total</strong><strong>${fmtINR(total)}</strong></div>
+            </div>
+            ${!paid ? `
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;">
+                <button type="button" id="portalApproveBtn" class="btn btn-outline">1-Click Approve Quote</button>
+                <button type="button" id="portalUpiPayBtn" class="btn btn-teal">Pay via UPI (${fmtINR(total)})</button>
+              </div>
+            ` : `<div style="font-size:12.5px;color:#166534;font-weight:700;">Payment verified! Receipt &amp; GST Tax PDF unlocked for ${inv.client}.</div>`}
+          </div>
+        `);
+        const appBtn = document.getElementById("portalApproveBtn");
+        if (appBtn) {
+          appBtn.addEventListener("click", () => {
+            const lead = state.leads.find(l => l.name.toLowerCase().includes(inv.client.toLowerCase().split(" ")[0]));
+            if (lead) { lead.stage = "Quote Sent"; lead.timeline.unshift(`Client approved quote ${inv.id} via Customer Portal`); }
+            state.aiLogs.unshift({ id: "log" + Date.now(), text: `Client Portal: ${inv.client} approved ${inv.id}.`, time: "Just now", reversible: false });
+            save(); closeModal(); render(); showToast("Quote approved from Client Portal!");
+          });
+        }
+        const payBtn = document.getElementById("portalUpiPayBtn");
+        if (payBtn) {
+          payBtn.addEventListener("click", () => {
+            inv.status = "Paid"; inv.days = 0;
+            const lead = state.leads.find(l => l.name.toLowerCase().includes(inv.client.toLowerCase().split(" ")[0]));
+            if (lead) { lead.stage = "Won"; lead.timeline.unshift(`UPI payment ${fmtINR(total)} completed via Client Portal`); }
+            state.aiLogs.unshift({ id: "log" + Date.now(), text: `Client Portal UPI Payment received: ${inv.id} (${fmtINR(total)}).`, time: "Just now", reversible: false });
+            save(); closeModal(); render(); showToast(`UPI Payment received! ${inv.id} marked Paid & Deal Won.`);
+          });
+        }
+      }
+
+      document.getElementById("voiceNoteBtn").addEventListener("click", () => {
+        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        openModal("Voice-to-CRM Extractor (Field Staff Mode)", `
+          <p style="font-size:13px;color:var(--muted);margin-bottom:10px;">Speak or paste a quick Hindi/English voice note. ScaleCraft AI automatically extracts the Lead, Deal Value, and Follow-up Task.</p>
+          <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+            <button type="button" id="startMicBtn" class="btn btn-teal">${SpeechRec ? "Start Live Mic" : "Mic Unavailable (Use Sample)"}</button>
+            <button type="button" id="sampleVoiceBtn" class="btn btn-outline">Load Sample Voice Note</button>
+          </div>
+          <form id="voiceParseForm">
+            <div class="field"><label>Voice Transcript</label><textarea id="voiceText" rows="3" required placeholder="e.g., Ramesh from Balaji Traders called for 100 crates worth 45000 rupees, follow up tomorrow 11 AM"></textarea></div>
+            <button type="submit" class="btn btn-primary" style="width:100%;">Extract Lead &amp; Create Follow-up Task</button>
+          </form>
+        `);
+        document.getElementById("sampleVoiceBtn").addEventListener("click", () => {
+          document.getElementById("voiceText").value = "Daksh from Apex Traders called on WhatsApp, wants custom AI CRM worth 55000 rupees, follow up tomorrow 11 AM";
+        });
+        document.getElementById("startMicBtn").addEventListener("click", () => {
+          if (!SpeechRec) { document.getElementById("sampleVoiceBtn").click(); showToast("Loaded sample voice note"); return; }
+          const rec = new SpeechRec();
+          rec.lang = "en-IN";
+          rec.onresult = (ev) => {
+            document.getElementById("voiceText").value = ev.results?.[0]?.[0]?.transcript || "";
+          };
+          rec.start();
+          showToast("Listening... speak your CRM update");
+        });
+        document.getElementById("voiceParseForm").addEventListener("submit", (ev) => {
+          ev.preventDefault();
+          const txt = document.getElementById("voiceText").value.trim();
+          const amtMatch = txt.match(/(\d[\d,]{2,})/);
+          const val = amtMatch ? Number(amtMatch[1].replace(/,/g, "")) : 35000;
+          const nameMatch = txt.match(/(?:from|at|for)\s+([A-Z][a-zA-Z]+(?:\s+[A-Z][a-zA-Z]+)?)/);
+          const biz = nameMatch ? nameMatch[1] : "Voice Note Lead";
+          const contactMatch = txt.match(/^([A-Z][a-zA-Z]+)/);
+          const contact = contactMatch ? contactMatch[1] : "Owner";
+          state.leads.unshift({
+            id: "l" + Date.now(),
+            name: biz,
+            contact,
+            phone: "+91 98000 00000",
+            owner: "Aarav",
+            source: "WhatsApp",
+            stage: "Qualified",
+            value: val,
+            note: txt,
+            timeline: [`Voice-to-CRM extracted (${fmtINR(val)})`]
+          });
+          state.tasks.unshift({
+            id: "tk" + Date.now(),
+            title: `Follow up ${biz} (${fmtINR(val)})`,
+            owner: "Aarav",
+            due: txt.toLowerCase().includes("tomorrow") ? "Tomorrow" : "Today",
+            priority: "High",
+            done: false
+          });
+          state.aiLogs.unshift({ id: "log" + Date.now(), text: `Voice-to-CRM created lead "${biz}" + follow-up task.`, time: "Just now", reversible: false });
+          state.tab = "pipeline";
+          save(); closeModal(); render();
+          showToast(`Extracted "${biz}" (${fmtINR(val)}) + Task!`);
+        });
       });
 
       function openInvoiceModal(prefillClient) {
@@ -1779,6 +1931,21 @@
           e.preventDefault();
           const input = document.getElementById("aiCmdInput");
           if (input && input.value.trim()) runAICommand(input.value.trim());
+        }
+        if (e.target.id === "waCampaignForm") {
+          e.preventDefault();
+          const seg = document.getElementById("campSeg").value;
+          const tpl = document.getElementById("campTpl").value;
+          const count = seg === "overdue" ? state.invoices.filter(i=>i.status==="Overdue").length : seg === "quotesent" ? state.leads.filter(l=>l.stage==="Quote Sent").length : state.leads.length;
+          state.aiQueue.unshift({
+            id: "q" + Date.now(),
+            title: `Send WhatsApp Campaign (${count} recipients)`,
+            detail: `Template: "${tpl}" · Segment: ${seg}`,
+            type: "followup"
+          });
+          state.tab = "ai";
+          save(); render();
+          showToast(`Campaign queued for ${count} contact(s) in AI Operator!`);
         }
       });
 
@@ -2023,6 +2190,7 @@
 
         add("Cookie Consent System", !!document.getElementById("cookieBanner") && typeof saveCookiePrefs === "function", readCookiePrefs() ? "Consent saved" : "Banner ready");
         add("Supabase JS SDK v2 Ready", !!(window.supabase && window.supabase.createClient), getCloudCfg().url || "Not set");
+        add("Voice-to-CRM & Client Portal Ready", !!(document.getElementById("voiceNoteBtn") && typeof openClientPortal === "function"), "Voice + UPI Portal live");
 
         const passed = checks.filter(c => c.ok).length;
         if (showUI) {
